@@ -1,24 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校园失物招领</title>
+    <meta name="description" content="拾光校园——校园失物招领信息搜索">
+    <title>拾光校园｜校园失物招领</title>
+
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
 <body>
 
-<header>
-    <h1>校园失物招领</h1>
-    <p>让丢失的物品更快回到主人身边</p>
-</header>
+<main class="app-shell">
 
-<main>
-    <h2>失物招领信息</h2>
-    <p>项目开发中……</p>
+    <!-- 顶部标题栏 -->
+    <header class="app-header">
+        <a class="brand" href="#home">
+            <span class="brand-mark">拾</span>
+
+            <span>
+                <strong>拾光校园</strong>
+                <small>让遗失都有回家的线索</small>
+            </span>
+        </a>
+    </header>
+
+
+    <!-- JavaScript 会把页面内容放到这里 -->
+    <section id="view" class="view"></section>
+
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+
+        <a href="#home" data-nav="home">
+            <span>⌂</span>
+            首页
+        </a>
+
+        <a href="#search" data-nav="search">
+            <span>⌕</span>
+            搜索
+        </a>
+
+    </nav>
+
 </main>
 
+
+<script src="assets/js/core.js"></script>
 <script src="assets/js/app.js"></script>
 
 </body>
