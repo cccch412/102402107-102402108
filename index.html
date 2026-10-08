@@ -22,16 +22,13 @@
     >
 </head>
 
-
 <body>
 
 <div class="ambient ambient-one"></div>
 <div class="ambient ambient-two"></div>
 
-
 <main class="app-shell">
 
-    <!-- 顶部 -->
     <header class="app-header">
 
         <a
@@ -60,15 +57,11 @@
 
     </header>
 
-
-    <!-- 页面内容 -->
     <section
         id="view"
         class="view"
     ></section>
 
-
-    <!-- 底部导航 -->
     <nav
         class="bottom-nav"
         aria-label="主要导航"
@@ -78,50 +71,44 @@
             href="#home"
             data-nav="home"
         >
-
             <span>⌂</span>
-
             首页
-
         </a>
-
 
         <a
             href="#search"
             data-nav="search"
         >
-
             <span>⌕</span>
-
             搜索
-
         </a>
-
 
         <a
             href="#publish"
             class="publish-nav"
             data-nav="publish"
         >
-
             <span>＋</span>
-
             发布
+        </a>
 
+        <a
+            href="#mine"
+            data-nav="mine"
+        >
+            <span>♙</span>
+            我的
         </a>
 
     </nav>
 
 </main>
 
-
-<!-- 操作提示 -->
 <div
     class="toast"
     id="toast"
     role="status"
 ></div>
-
 
 <script src="assets/js/core.js"></script>
 <script src="assets/js/app.js"></script>

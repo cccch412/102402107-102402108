@@ -7,17 +7,9 @@
         window.LostFoundCore;
 
 
-    // =========================
-    // 本地存储名称
-    // =========================
-
     const STORAGE_KEY =
         "shiguang-campus-items-v1";
 
-
-    // =========================
-    // 分类图标
-    // =========================
 
     const ICONS = {
 
@@ -35,10 +27,6 @@
 
     };
 
-
-    // =========================
-    // 默认示例数据
-    // =========================
 
     const seedItems = [
 
@@ -217,14 +205,9 @@
         );
 
 
-    // 当前全部失物招领数据
     let items =
         loadItems();
 
-
-    // =========================
-    // 从浏览器读取数据
-    // =========================
 
     function loadItems() {
 
@@ -258,10 +241,6 @@
     }
 
 
-    // =========================
-    // 保存数据
-    // =========================
-
     function saveItems() {
 
         localStorage.setItem(
@@ -273,10 +252,6 @@
         );
     }
 
-
-    // =========================
-    // HTML 特殊字符处理
-    // =========================
 
     function escapeHtml(value) {
 
@@ -311,10 +286,6 @@
     }
 
 
-    // =========================
-    // 消息提示
-    // =========================
-
     function showToast(message) {
 
         toast.textContent =
@@ -346,10 +317,6 @@
             );
     }
 
-
-    // =========================
-    // 页面路由
-    // =========================
 
     function routeParts() {
 
@@ -383,10 +350,6 @@
     }
 
 
-    // =========================
-    // 底部导航状态
-    // =========================
-
     function setNav(page) {
 
         document
@@ -412,10 +375,6 @@
             );
     }
 
-
-    // =========================
-    // 物品卡片
-    // =========================
 
     function itemCard(item) {
 
@@ -514,9 +473,7 @@
 
 
             <span class="chevron">
-
                 ›
-
             </span>
 
         </article>
@@ -524,10 +481,6 @@
         `;
     }
 
-
-    // =========================
-    // 卡片点击进入详情
-    // =========================
 
     function bindCards() {
 
@@ -590,10 +543,6 @@
     }
 
 
-    // =========================
-    // 类型筛选
-    // =========================
-
     function filterChips(active) {
 
         const types = [
@@ -645,10 +594,6 @@
     }
 
 
-    // =========================
-    // 空数据提示
-    // =========================
-
     function emptyState(
         title,
         text
@@ -663,15 +608,11 @@
             </div>
 
             <h3>
-
                 ${escapeHtml(title)}
-
             </h3>
 
             <p>
-
                 ${escapeHtml(text)}
-
             </p>
 
         </div>
@@ -679,10 +620,6 @@
         `;
     }
 
-
-    // =========================
-    // 首页
-    // =========================
 
     function renderHome() {
 
@@ -694,24 +631,16 @@
         <section class="hero">
 
             <span class="eyebrow">
-
                 校园失物招领
-
             </span>
 
-
             <h1>
-
                 今天想找什么？
-
             </h1>
 
-
             <p>
-
                 集中浏览校园里的失物招领信息，
                 快速找到重要线索。
-
             </p>
 
 
@@ -724,15 +653,11 @@
                 ⌕
 
                 <span>
-
                     搜索校园卡、雨伞、钥匙……
-
                 </span>
 
                 <strong>
-
                     搜索
-
                 </strong>
 
             </button>
@@ -747,15 +672,11 @@
                 >
 
                     <span>
-
                         我丢东西了
-
                     </span>
 
                     <strong>
-
                         发布寻物启事 →
-
                     </strong>
 
                 </button>
@@ -768,15 +689,11 @@
                 >
 
                     <span>
-
                         我捡到东西
-
                     </span>
 
                     <strong>
-
                         发布招领信息 →
-
                     </strong>
 
                 </button>
@@ -791,24 +708,18 @@
             <div>
 
                 <span class="eyebrow">
-
                     校园寻物
-
                 </span>
 
                 <h2>
-
                     最新信息
-
                 </h2>
 
             </div>
 
 
             <span class="count-pill">
-
                 ${items.length} 条
-
             </span>
 
         </div>
@@ -877,10 +788,6 @@
     }
 
 
-    // =========================
-    // 首页类型筛选
-    // =========================
-
     function bindHomeFilters() {
 
         document
@@ -948,10 +855,6 @@
     }
 
 
-    // =========================
-    // 搜索页面
-    // =========================
-
     function renderSearch(params) {
 
         setNav("search");
@@ -1012,24 +915,16 @@
         <div class="page-title">
 
             <span class="eyebrow">
-
                 快速定位线索
-
             </span>
 
-
             <h1>
-
                 搜索信息
-
             </h1>
 
-
             <p>
-
                 支持按物品名称、分类、
                 地点和寻物类型组合查询。
-
             </p>
 
         </div>
@@ -1052,9 +947,7 @@
                 >
 
                 <button type="submit">
-
                     搜索
-
                 </button>
 
             </label>
@@ -1069,9 +962,7 @@
                     <select name="category">
 
                         <option value="all">
-
                             全部分类
-
                         </option>
 
                         ${
@@ -1135,9 +1026,7 @@
         <div class="results-summary">
 
             <strong>
-
                 ${results.length}
-
             </strong>
 
             条结果
@@ -1297,10 +1186,6 @@
     }
 
 
-    // =========================
-    // 发布页面
-    // =========================
-
     function renderPublish(params) {
 
         setNav("publish");
@@ -1321,24 +1206,16 @@
         <div class="page-title">
 
             <span class="eyebrow">
-
                 补充一条校园线索
-
             </span>
 
-
             <h1>
-
                 发布信息
-
             </h1>
 
-
             <p>
-
                 信息越清晰，
                 物品越容易回到主人身边。
-
             </p>
 
         </div>
@@ -1354,9 +1231,7 @@
             <fieldset>
 
                 <legend>
-
                     信息类型
-
                 </legend>
 
 
@@ -1379,9 +1254,7 @@
                         >
 
                         <span>
-
                             🔍 寻物信息
-
                         </span>
 
                     </label>
@@ -1404,9 +1277,7 @@
                         >
 
                         <span>
-
                             🙌 招领信息
-
                         </span>
 
                     </label>
@@ -1449,9 +1320,7 @@
                     >
 
                         <option value="">
-
                             请选择分类
-
                         </option>
 
 
@@ -1465,9 +1334,7 @@
                                         return `
 
                                         <option value="${c}">
-
                                             ${c}
-
                                         </option>
 
                                         `;
@@ -1582,7 +1449,6 @@
             );
 
 
-        // 自动填写当天日期
         form.date.value =
             new Date()
                 .toISOString()
@@ -1595,7 +1461,6 @@
                 event.preventDefault();
 
 
-                // 清空上一次错误
                 document
                     .querySelectorAll(
                         "[data-error]"
@@ -1632,7 +1497,6 @@
                     );
 
 
-                // 表单校验失败
                 if (!result.item) {
 
 
@@ -1680,17 +1544,14 @@
                 }
 
 
-                // 添加到最前面
                 items.unshift(
                     result.item
                 );
 
 
-                // 保存到 localStorage
                 saveItems();
 
 
-                // 保存刚刚发布的 ID
                 sessionStorage.setItem(
 
                     "lastPublishedId",
@@ -1700,16 +1561,11 @@
                 );
 
 
-                // 跳转发布成功页面
                 go("success");
 
             };
     }
 
-
-    // =========================
-    // 发布成功
-    // =========================
 
     function renderSuccess() {
 
@@ -1727,31 +1583,23 @@
         <div class="success-card">
 
             <div class="success-check">
-
                 ✓
-
             </div>
 
 
             <span class="eyebrow">
-
                 操作成功
-
             </span>
 
 
             <h1>
-
                 发布成功！
-
             </h1>
 
 
             <p>
-
                 信息已保存到首页，
                 其他同学可以通过关键词搜索到它。
-
             </p>
 
 
@@ -1762,9 +1610,7 @@
                     id="goHome"
                     type="button"
                 >
-
                     返回首页
-
                 </button>
 
 
@@ -1830,9 +1676,456 @@
     }
 
 
-    // =========================
-    // 详情页
-    // =========================
+    function renderMine() {
+
+        setNav("mine");
+
+
+        const mine =
+            items.filter(
+
+                function (item) {
+
+                    return item.mine === true;
+
+                }
+
+            );
+
+
+        const activeCount =
+            mine.filter(
+
+                function (item) {
+
+                    return !Core.isCompleted(item);
+
+                }
+
+            ).length;
+
+
+        const completedCount =
+            mine.length -
+            activeCount;
+
+
+        view.innerHTML = `
+
+        <div class="page-title">
+
+            <span class="eyebrow">
+                我的校园线索
+            </span>
+
+            <h1>
+                我的发布
+            </h1>
+
+            <p>
+                在这里查看自己发布的信息，
+                并及时更新物品状态。
+            </p>
+
+        </div>
+
+
+        <div class="mine-summary">
+
+            <div>
+
+                <strong>
+                    ${mine.length}
+                </strong>
+
+                <span>
+                    全部发布
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    ${activeCount}
+                </strong>
+
+                <span>
+                    进行中
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    ${completedCount}
+                </strong>
+
+                <span>
+                    已完成
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="mine-heading">
+
+            <h2>
+                发布记录
+            </h2>
+
+            <button
+                class="mini-publish-button"
+                id="minePublish"
+                type="button"
+            >
+                ＋ 发布新信息
+            </button>
+
+        </div>
+
+
+        <div class="mine-list">
+
+            ${
+                mine.length
+
+                    ? mine
+                        .map(
+                            mineCard
+                        )
+                        .join("")
+
+                    : `
+
+                    <div class="empty-state">
+
+                        <div>
+                            📭
+                        </div>
+
+                        <h3>
+                            还没有发布记录
+                        </h3>
+
+                        <p>
+                            发布一条寻物或招领信息后，
+                            就会出现在这里。
+                        </p>
+
+                    </div>
+
+                    `
+            }
+
+        </div>
+
+        `;
+
+
+        document
+            .getElementById(
+                "minePublish"
+            )
+            .onclick =
+            function () {
+
+                go("publish");
+
+            };
+
+
+        bindMineCards();
+    }
+
+
+    function mineCard(item) {
+
+        const completed =
+            Core.isCompleted(item);
+
+
+        const finishText =
+            item.type === "lost"
+
+                ? "标记为已找到"
+
+                : "标记为已归还";
+
+
+        return `
+
+        <article
+            class="mine-card ${
+                completed
+                    ? "completed"
+                    : ""
+            }"
+        >
+
+            <div class="mine-card-main">
+
+                <div
+                    class="item-icon ${item.type}"
+                >
+
+                    ${
+                        ICONS[item.category]
+                        || "📦"
+                    }
+
+                </div>
+
+
+                <div class="mine-card-copy">
+
+                    <div class="item-topline">
+
+                        <span
+                            class="type-badge ${item.type}"
+                        >
+
+                            ${
+                                item.type === "lost"
+                                    ? "寻物"
+                                    : "招领"
+                            }
+
+                        </span>
+
+
+                        <span
+                            class="status-badge"
+                        >
+
+                            ${escapeHtml(
+                                item.status
+                            )}
+
+                        </span>
+
+                    </div>
+
+
+                    <h3>
+                        ${escapeHtml(
+                            item.title
+                        )}
+                    </h3>
+
+
+                    <p>
+
+                        ${escapeHtml(
+                            item.location
+                        )}
+
+                        ·
+
+                        ${escapeHtml(
+                            item.date
+                        )}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="mine-card-actions">
+
+                <button
+                    class="secondary-button mine-detail-button"
+                    data-detail-id="${escapeHtml(item.id)}"
+                    type="button"
+                >
+
+                    查看详情
+
+                </button>
+
+
+                ${
+                    completed
+
+                        ? `
+
+                        <span class="done-label">
+
+                            ✓ 已完成
+
+                        </span>
+
+                        `
+
+                        : `
+
+                        <button
+                            class="status-button"
+                            data-complete-id="${escapeHtml(item.id)}"
+                            type="button"
+                        >
+
+                            ${finishText}
+
+                        </button>
+
+                        `
+                }
+
+            </div>
+
+        </article>
+
+        `;
+    }
+
+
+    function bindMineCards() {
+
+        document
+            .querySelectorAll(
+                "[data-detail-id]"
+            )
+            .forEach(
+
+                function (button) {
+
+                    button.onclick =
+                        function () {
+
+                            go(
+
+                                "detail?id=" +
+
+                                encodeURIComponent(
+                                    button.dataset.detailId
+                                )
+
+                            );
+
+                        };
+
+                }
+
+            );
+
+
+        document
+            .querySelectorAll(
+                "[data-complete-id]"
+            )
+            .forEach(
+
+                function (button) {
+
+                    button.onclick =
+                        function () {
+
+                            completeItem(
+                                button.dataset.completeId
+                            );
+
+                        };
+
+                }
+
+            );
+    }
+
+
+    function completeItem(id) {
+
+        const item =
+            items.find(
+
+                function (entry) {
+
+                    return entry.id === id;
+
+                }
+
+            );
+
+
+        if (!item) {
+
+            showToast(
+                "没有找到这条信息"
+            );
+
+            return;
+        }
+
+
+        if (!item.mine) {
+
+            showToast(
+                "只能修改自己发布的信息"
+            );
+
+            return;
+        }
+
+
+        if (
+            Core.isCompleted(item)
+        ) {
+
+            showToast(
+                "这条信息已经完成"
+            );
+
+            return;
+        }
+
+
+        const nextStatus =
+            Core.statusFor(
+                item.type,
+                true
+            );
+
+
+        const message =
+            item.type === "lost"
+
+                ? "确认已经找到这个物品吗？"
+
+                : "确认物品已经归还失主吗？";
+
+
+        if (
+            !window.confirm(message)
+        ) {
+
+            return;
+        }
+
+
+        item.status =
+            nextStatus;
+
+
+        saveItems();
+
+
+        showToast(
+            "状态已更新为“" +
+            nextStatus +
+            "”"
+        );
+
+
+        renderMine();
+    }
+
 
     function renderDetail(params) {
 
@@ -1876,9 +2169,7 @@
                     id="missingHome"
                     type="button"
                 >
-
                     返回首页
-
                 </button>
 
                 `;
@@ -1900,6 +2191,18 @@
         }
 
 
+        const completed =
+            Core.isCompleted(item);
+
+
+        const finishText =
+            item.type === "lost"
+
+                ? "我已经找到物品"
+
+                : "物品已经归还失主";
+
+
         view.innerHTML = `
 
         <button
@@ -1907,9 +2210,7 @@
             id="detailBack"
             type="button"
         >
-
             ← 返回
-
         </button>
 
 
@@ -1968,6 +2269,23 @@
                         )}
 
                     </span>
+
+
+                    ${
+                        item.mine
+
+                            ? `
+
+                            <span class="mine-badge">
+
+                                我的发布
+
+                            </span>
+
+                            `
+
+                            : ""
+                    }
 
                 </div>
 
@@ -2051,17 +2369,13 @@
                     <div>
 
                         <small>
-
                             发布者联系方式
-
                         </small>
 
                         <strong>
-
                             ${escapeHtml(
                                 item.contact
                             )}
-
                         </strong>
 
                     </div>
@@ -2072,23 +2386,21 @@
                         id="copyContact"
                         type="button"
                     >
-
                         一键复制
-
                     </button>
 
                 </div>
 
 
                 ${
-                    Core.isCompleted(item)
+                    completed
 
                         ? `
 
                         <div class="completed-note">
 
-                            ✓ 这条信息已完成，
-                            请勿重复联系发布者。
+                            ✓ 这条信息已经完成，
+                            无需继续联系发布者。
 
                         </div>
 
@@ -2107,6 +2419,41 @@
                         </button>
 
                         `
+                }
+
+
+                ${
+                    item.mine &&
+                    !completed
+
+                        ? `
+
+                        <div class="owner-panel">
+
+                            <span>
+                                发布者操作
+                            </span>
+
+                            <p>
+                                如果这条信息已经处理完成，
+                                可以及时更新状态。
+                            </p>
+
+                            <button
+                                class="status-button owner-status-button"
+                                id="detailComplete"
+                                type="button"
+                            >
+
+                                ✓ ${finishText}
+
+                            </button>
+
+                        </div>
+
+                        `
+
+                        : ""
                 }
 
             </div>
@@ -2172,12 +2519,63 @@
                 };
 
         }
+
+
+        const completeButton =
+            document.getElementById(
+                "detailComplete"
+            );
+
+
+        if (completeButton) {
+
+            completeButton.onclick =
+                function () {
+
+                    const wasLost =
+                        item.type === "lost";
+
+
+                    const message =
+                        wasLost
+
+                            ? "确认已经找到这个物品吗？"
+
+                            : "确认物品已经归还失主吗？";
+
+
+                    if (
+                        !window.confirm(message)
+                    ) {
+
+                        return;
+                    }
+
+
+                    item.status =
+                        Core.statusFor(
+                            item.type,
+                            true
+                        );
+
+
+                    saveItems();
+
+
+                    showToast(
+                        "状态更新成功"
+                    );
+
+
+                    renderDetail(
+                        params
+                    );
+
+                };
+
+        }
     }
 
-
-    // =========================
-    // 复制联系方式
-    // =========================
 
     function copyContact(contact) {
 
@@ -2225,10 +2623,6 @@
     }
 
 
-    // =========================
-    // 兼容复制
-    // =========================
-
     function fallbackCopy(text) {
 
         const area =
@@ -2270,10 +2664,6 @@
     }
 
 
-    // =========================
-    // 页面入口
-    // =========================
-
     function render() {
 
         const route =
@@ -2305,6 +2695,14 @@
         ) {
 
             renderSuccess();
+
+        }
+
+        else if (
+            route.page === "mine"
+        ) {
+
+            renderMine();
 
         }
 
