@@ -69,10 +69,6 @@ button {
 }
 
 
-/* =========================
-   背景装饰
-   ========================= */
-
 .ambient {
     position: fixed;
 
@@ -106,10 +102,6 @@ button {
 }
 
 
-/* =========================
-   页面主体
-   ========================= */
-
 .app-shell {
     position: relative;
 
@@ -141,10 +133,6 @@ button {
         blur(16px);
 }
 
-
-/* =========================
-   顶部
-   ========================= */
 
 .app-header {
     position: sticky;
@@ -240,10 +228,6 @@ button {
 }
 
 
-/* =========================
-   页面内容
-   ========================= */
-
 .view {
     padding:
         28px
@@ -251,10 +235,6 @@ button {
         16px;
 }
 
-
-/* =========================
-   首页大区域
-   ========================= */
 
 .hero {
     position: relative;
@@ -344,10 +324,6 @@ button {
 }
 
 
-/* =========================
-   首页搜索入口
-   ========================= */
-
 .search-entry {
     position: relative;
 
@@ -405,10 +381,6 @@ button {
     font-size: 12px;
 }
 
-
-/* =========================
-   发布快捷入口
-   ========================= */
 
 .quick-actions {
     position: relative;
@@ -481,10 +453,6 @@ button {
 }
 
 
-/* =========================
-   区域标题
-   ========================= */
-
 .section-heading {
     display: flex;
 
@@ -526,10 +494,6 @@ button {
     font-weight: 800;
 }
 
-
-/* =========================
-   筛选按钮
-   ========================= */
 
 .chips {
     display: flex;
@@ -580,10 +544,6 @@ button {
         rgba(22, 118, 189, 0.2);
 }
 
-
-/* =========================
-   信息列表
-   ========================= */
 
 .card-list {
     display: grid;
@@ -682,11 +642,14 @@ button {
     align-items: center;
 
     gap: 7px;
+
+    flex-wrap: wrap;
 }
 
 
 .type-badge,
-.status-badge {
+.status-badge,
+.mine-badge {
     display: inline-flex;
 
     align-items: center;
@@ -723,6 +686,13 @@ button {
     color: #627887;
 
     background: #edf4f7;
+}
+
+
+.mine-badge {
+    color: var(--blue-dark);
+
+    background: #e9f5fc;
 }
 
 
@@ -767,10 +737,6 @@ button {
 }
 
 
-/* =========================
-   页面标题
-   ========================= */
-
 .page-title {
     padding:
         8px
@@ -783,10 +749,6 @@ button {
     color: var(--muted);
 }
 
-
-/* =========================
-   搜索面板
-   ========================= */
 
 .search-panel,
 .form-card,
@@ -947,10 +909,6 @@ button {
 }
 
 
-/* =========================
-   空状态
-   ========================= */
-
 .empty-state {
     padding:
         44px
@@ -987,10 +945,6 @@ button {
     color: var(--muted);
 }
 
-
-/* =========================
-   发布表单
-   ========================= */
 
 .form-card {
     padding: 23px;
@@ -1116,12 +1070,9 @@ button {
 }
 
 
-/* =========================
-   按钮
-   ========================= */
-
 .primary-button,
-.secondary-button {
+.secondary-button,
+.status-button {
     padding:
         13px
         18px;
@@ -1161,9 +1112,21 @@ button {
 }
 
 
-/* =========================
-   发布成功
-   ========================= */
+.status-button {
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #13a784,
+            #18bd96
+        );
+
+    box-shadow:
+        0 7px 16px
+        rgba(19, 184, 155, 0.2);
+}
+
 
 .success-card {
     padding:
@@ -1219,10 +1182,6 @@ button {
         0;
 }
 
-
-/* =========================
-   详情页
-   ========================= */
 
 .detail-back {
     margin-bottom: 14px;
@@ -1400,9 +1359,247 @@ button {
 }
 
 
-/* =========================
-   底部导航
-   ========================= */
+.owner-panel {
+    margin-top: 20px;
+
+    padding: 18px;
+
+    border:
+        1px solid
+        #bde8da;
+
+    border-radius: 16px;
+
+    background:
+        #f2fcf8;
+}
+
+
+.owner-panel > span {
+    color: #14735f;
+
+    font-size: 12px;
+
+    font-weight: 900;
+}
+
+
+.owner-panel p {
+    margin:
+        6px
+        0
+        14px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+.owner-status-button {
+    width: 100%;
+}
+
+
+.mine-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 25px;
+}
+
+
+.mine-summary div {
+    padding: 20px 10px;
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 18px;
+
+    background: white;
+
+    text-align: center;
+
+    box-shadow:
+        0 7px 20px
+        rgba(28, 85, 116, 0.06);
+}
+
+
+.mine-summary strong {
+    display: block;
+
+    color: var(--blue);
+
+    font-size: 27px;
+}
+
+
+.mine-summary span {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+
+.mine-heading {
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+
+.mine-heading h2 {
+    margin: 0;
+
+    font-size: 21px;
+}
+
+
+.mini-publish-button {
+    padding:
+        9px
+        13px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    color: var(--blue);
+
+    background:
+        #eaf6fb;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+.mine-list {
+    display: grid;
+
+    gap: 13px;
+}
+
+
+.mine-card {
+    padding: 17px;
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 20px;
+
+    background: white;
+
+    box-shadow:
+        0 8px 24px
+        rgba(28, 85, 116, 0.06);
+}
+
+
+.mine-card.completed {
+    opacity: 0.76;
+}
+
+
+.mine-card-main {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.mine-card-copy {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.mine-card-copy h3 {
+    margin:
+        7px
+        0
+        4px;
+
+    font-size: 16px;
+}
+
+
+.mine-card-copy p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+.mine-card-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 14px;
+
+    padding-top: 13px;
+
+    border-top:
+        1px solid
+        #edf3f6;
+}
+
+
+.mine-card-actions button {
+    flex: 1;
+}
+
+
+.done-label {
+    flex: 1;
+
+    padding:
+        12px;
+
+    border-radius: 12px;
+
+    color: #3c8469;
+
+    background: #edf9f3;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    font-weight: 900;
+}
+
 
 .bottom-nav {
     position: fixed;
@@ -1424,7 +1621,7 @@ button {
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(4, 1fr);
 
     padding: 8px;
 
@@ -1511,10 +1708,6 @@ button {
 }
 
 
-/* =========================
-   Toast
-   ========================= */
-
 .toast {
     position: fixed;
 
@@ -1563,10 +1756,6 @@ button {
         );
 }
 
-
-/* =========================
-   小屏幕
-   ========================= */
 
 @media (
     max-width: 600px
@@ -1628,6 +1817,29 @@ button {
         flex-direction: column;
 
         align-items: stretch;
+    }
+
+
+    .mine-summary {
+        gap: 7px;
+    }
+
+
+    .mine-summary div {
+        padding:
+            16px
+            5px;
+    }
+
+
+    .mine-card-actions {
+        flex-direction: column;
+    }
+
+
+    .mine-card-actions button,
+    .done-label {
+        width: 100%;
     }
 
 
