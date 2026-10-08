@@ -1,46 +1,113 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="拾光校园——校园失物招领信息搜索">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="拾光校园——校园失物招领信息发布与搜索"
+    >
+
     <title>拾光校园｜校园失物招领</title>
 
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link
+        rel="stylesheet"
+        href="assets/css/styles.css"
+    >
 </head>
+
 
 <body>
 
+<div class="ambient ambient-one"></div>
+<div class="ambient ambient-two"></div>
+
+
 <main class="app-shell">
 
-    <!-- 顶部标题栏 -->
+    <!-- 顶部 -->
     <header class="app-header">
-        <a class="brand" href="#home">
-            <span class="brand-mark">拾</span>
+
+        <a
+            class="brand"
+            href="#home"
+            aria-label="返回首页"
+        >
+
+            <span class="brand-mark">
+                拾
+            </span>
 
             <span>
-                <strong>拾光校园</strong>
-                <small>让遗失都有回家的线索</small>
+
+                <strong>
+                    拾光校园
+                </strong>
+
+                <small>
+                    让遗失都有回家的线索
+                </small>
+
             </span>
+
         </a>
+
     </header>
 
 
-    <!-- JavaScript 会把页面内容放到这里 -->
-    <section id="view" class="view"></section>
+    <!-- 页面内容 -->
+    <section
+        id="view"
+        class="view"
+    ></section>
 
 
     <!-- 底部导航 -->
-    <nav class="bottom-nav">
+    <nav
+        class="bottom-nav"
+        aria-label="主要导航"
+    >
 
-        <a href="#home" data-nav="home">
+        <a
+            href="#home"
+            data-nav="home"
+        >
+
             <span>⌂</span>
+
             首页
+
         </a>
 
-        <a href="#search" data-nav="search">
+
+        <a
+            href="#search"
+            data-nav="search"
+        >
+
             <span>⌕</span>
+
             搜索
+
+        </a>
+
+
+        <a
+            href="#publish"
+            class="publish-nav"
+            data-nav="publish"
+        >
+
+            <span>＋</span>
+
+            发布
+
         </a>
 
     </nav>
@@ -48,8 +115,17 @@
 </main>
 
 
+<!-- 操作提示 -->
+<div
+    class="toast"
+    id="toast"
+    role="status"
+></div>
+
+
 <script src="assets/js/core.js"></script>
 <script src="assets/js/app.js"></script>
 
 </body>
+
 </html>

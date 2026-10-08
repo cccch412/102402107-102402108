@@ -2,87 +2,276 @@
 
     "use strict";
 
-    const Core = window.LostFoundCore;
-    const view = document.getElementById("view");
+
+    const Core =
+        window.LostFoundCore;
 
 
     // =========================
-    // 示例数据
+    // 本地存储名称
     // =========================
 
-    const items = [
+    const STORAGE_KEY =
+        "shiguang-campus-items-v1";
+
+
+    // =========================
+    // 分类图标
+    // =========================
+
+    const ICONS = {
+
+        "校园卡": "🪪",
+
+        "数码": "🎧",
+
+        "雨具": "☂️",
+
+        "钥匙": "🔑",
+
+        "书籍": "📚",
+
+        "其他": "📦"
+
+    };
+
+
+    // =========================
+    // 默认示例数据
+    // =========================
+
+    const seedItems = [
 
         {
             id: "seed-1",
+
             type: "found",
+
             title: "拾到一张校园卡",
+
             category: "校园卡",
+
             date: "2026-09-26",
+
             location: "第一教学楼 302",
-            description: "下课后在第三排座位旁发现，请失主联系时说明姓名和学号后四位。",
-            contact: "13800138000",
-            status: "等待认领"
+
+            description:
+                "下课后在第三排座位旁发现，请失主联系时说明姓名和学号后四位。",
+
+            contact:
+                "13800138000",
+
+            status:
+                "等待认领",
+
+            mine: false,
+
+            createdAt:
+                1790437800000
         },
+
 
         {
             id: "seed-2",
+
             type: "lost",
-            title: "寻找白色蓝牙耳机",
-            category: "数码",
-            date: "2026-09-25",
-            location: "图书馆二楼",
-            description: "白色充电盒，右侧有一枚蓝色贴纸，可能遗落在靠窗自习区。",
-            contact: "student@example.com",
-            status: "寻找中"
+
+            title:
+                "寻找白色蓝牙耳机",
+
+            category:
+                "数码",
+
+            date:
+                "2026-09-25",
+
+            location:
+                "图书馆二楼",
+
+            description:
+                "白色充电盒，右侧有一枚蓝色贴纸，可能遗落在靠窗自习区。",
+
+            contact:
+                "student@example.com",
+
+            status:
+                "寻找中",
+
+            mine: true,
+
+            createdAt:
+                1790355900000
         },
+
 
         {
             id: "seed-3",
+
             type: "found",
-            title: "蓝色折叠雨伞待认领",
-            category: "雨具",
-            date: "2026-09-24",
-            location: "博学楼 A 区",
-            description: "深蓝色八骨折叠伞，伞柄系有白色挂绳。",
-            contact: "13900139000",
-            status: "等待认领"
+
+            title:
+                "蓝色折叠雨伞待认领",
+
+            category:
+                "雨具",
+
+            date:
+                "2026-09-24",
+
+            location:
+                "博学楼 A 区",
+
+            description:
+                "深蓝色八骨折叠伞，伞柄系有白色挂绳。",
+
+            contact:
+                "13900139000",
+
+            status:
+                "等待认领",
+
+            mine: true,
+
+            createdAt:
+                1790266800000
         },
+
 
         {
             id: "seed-4",
+
             type: "lost",
-            title: "寻找蓝色校园卡套",
-            category: "校园卡",
-            date: "2026-09-23",
-            location: "运动场",
-            description: "蓝色透明卡套，挂有一个小熊钥匙扣。",
-            contact: "lost@example.com",
-            status: "已找到"
+
+            title:
+                "寻找蓝色校园卡套",
+
+            category:
+                "校园卡",
+
+            date:
+                "2026-09-23",
+
+            location:
+                "运动场",
+
+            description:
+                "蓝色透明卡套，挂有一个小熊钥匙扣。",
+
+            contact:
+                "lost@example.com",
+
+            status:
+                "已找到",
+
+            mine: false,
+
+            createdAt:
+                1790180400000
         },
+
 
         {
             id: "seed-5",
+
             type: "found",
-            title: "教学楼门口捡到钥匙",
-            category: "钥匙",
-            date: "2026-09-22",
-            location: "至诚楼门口",
-            description: "两把钥匙和一枚绿色门禁扣，放在保安室。",
-            contact: "13700137000",
-            status: "已归还"
+
+            title:
+                "教学楼门口捡到钥匙",
+
+            category:
+                "钥匙",
+
+            date:
+                "2026-09-22",
+
+            location:
+                "至诚楼门口",
+
+            description:
+                "两把钥匙和一枚绿色门禁扣，放在保安室。",
+
+            contact:
+                "13700137000",
+
+            status:
+                "已归还",
+
+            mine: false,
+
+            createdAt:
+                1790094000000
         }
 
     ];
 
 
-    const ICONS = {
-        "校园卡": "🪪",
-        "数码": "🎧",
-        "雨具": "☂️",
-        "钥匙": "🔑",
-        "书籍": "📚",
-        "其他": "📦"
-    };
+    const view =
+        document.getElementById(
+            "view"
+        );
+
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    // 当前全部失物招领数据
+    let items =
+        loadItems();
+
+
+    // =========================
+    // 从浏览器读取数据
+    // =========================
+
+    function loadItems() {
+
+        try {
+
+            const saved =
+                JSON.parse(
+                    localStorage.getItem(
+                        STORAGE_KEY
+                    )
+                );
+
+
+            if (
+                Array.isArray(saved) &&
+                saved.length
+            ) {
+
+                return saved;
+            }
+
+
+            return seedItems.slice();
+
+        }
+
+        catch (error) {
+
+            return seedItems.slice();
+        }
+    }
+
+
+    // =========================
+    // 保存数据
+    // =========================
+
+    function saveItems() {
+
+        localStorage.setItem(
+
+            STORAGE_KEY,
+
+            JSON.stringify(items)
+
+        );
+    }
 
 
     // =========================
@@ -91,19 +280,70 @@
 
     function escapeHtml(value) {
 
-        return String(value == null ? "" : value)
-            .replace(/[&<>'"]/g, function (char) {
+        return String(
+            value == null
+                ? ""
+                : value
+        ).replace(
+
+            /[&<>'"]/g,
+
+            function (char) {
 
                 const map = {
+
                     "&": "&amp;",
+
                     "<": "&lt;",
+
                     ">": "&gt;",
+
                     "'": "&#39;",
+
                     '"': "&quot;"
+
                 };
 
+
                 return map[char];
-            });
+            }
+        );
+    }
+
+
+    // =========================
+    // 消息提示
+    // =========================
+
+    function showToast(message) {
+
+        toast.textContent =
+            message;
+
+
+        toast.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            showToast.timer
+        );
+
+
+        showToast.timer =
+            setTimeout(
+
+                function () {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+
+                1800
+            );
     }
 
 
@@ -113,37 +353,63 @@
 
     function routeParts() {
 
-        const raw = location.hash.slice(1) || "home";
-        const parts = raw.split("?");
+        const raw =
+            location.hash.slice(1)
+            || "home";
+
+
+        const parts =
+            raw.split("?");
+
 
         return {
-            page: parts[0],
-            params: new URLSearchParams(parts[1] || "")
+
+            page:
+                parts[0],
+
+            params:
+                new URLSearchParams(
+                    parts[1] || ""
+                )
+
         };
     }
 
 
     function go(hash) {
 
-        location.hash = hash;
+        location.hash =
+            hash;
     }
 
 
     // =========================
-    // 底部导航
+    // 底部导航状态
     // =========================
 
     function setNav(page) {
 
         document
-            .querySelectorAll("[data-nav]")
-            .forEach(function (node) {
+            .querySelectorAll(
+                "[data-nav]"
+            )
+            .forEach(
 
-                node.classList.toggle(
-                    "active",
-                    node.dataset.nav === page
-                );
-            });
+                function (node) {
+
+                    node.classList
+                        .toggle(
+
+                            "active",
+
+                            node.dataset.nav
+                            === page
+
+                        );
+
+                }
+
+            );
     }
 
 
@@ -153,161 +419,263 @@
 
     function itemCard(item) {
 
-        const icon = ICONS[item.category] || "📦";
+        const done =
+            Core.isCompleted(item);
+
 
         return `
+
         <article
-            class="item-card"
+            class="item-card ${
+                done
+                    ? "completed"
+                    : ""
+            }"
             data-id="${escapeHtml(item.id)}"
             tabindex="0"
             title="点击查看详情"
         >
 
-            <div class="item-icon ${item.type}">
-                ${icon}
+            <div
+                class="item-icon ${item.type}"
+            >
+
+                ${
+                    ICONS[item.category]
+                    || "📦"
+                }
+
             </div>
+
 
             <div class="item-copy">
 
                 <div class="item-topline">
 
-                    <span class="type-badge ${item.type}">
-                        ${item.type === "lost" ? "寻物" : "招领"}
+                    <span
+                        class="type-badge ${item.type}"
+                    >
+
+                        ${
+                            item.type === "lost"
+                                ? "寻物"
+                                : "招领"
+                        }
+
                     </span>
 
-                    <span class="status-badge">
-                        ${escapeHtml(item.status)}
+
+                    <span
+                        class="status-badge"
+                    >
+
+                        ${escapeHtml(
+                            item.status
+                        )}
+
                     </span>
 
                 </div>
 
+
                 <h3>
-                    ${escapeHtml(item.title)}
+
+                    ${escapeHtml(
+                        item.title
+                    )}
+
                 </h3>
 
+
                 <p>
-                    ⌖ ${escapeHtml(item.location)}
+
+                    ⌖ ${escapeHtml(
+                        item.location
+                    )}
+
                     ·
-                    ${escapeHtml(item.date)}
+
+                    ${escapeHtml(
+                        item.date
+                    )}
+
                 </p>
 
+
                 <small>
-                    ${escapeHtml(item.description)}
+
+                    ${escapeHtml(
+                        item.description
+                    )}
+
                 </small>
 
             </div>
 
-            <span class="chevron">›</span>
+
+            <span class="chevron">
+
+                ›
+
+            </span>
 
         </article>
+
         `;
     }
 
 
     // =========================
-    // 给卡片绑定详情页跳转
+    // 卡片点击进入详情
     // =========================
 
-    function bindItemCards() {
+    function bindCards() {
 
         document
-            .querySelectorAll(".item-card[data-id]")
-            .forEach(function (card) {
+            .querySelectorAll(
+                ".item-card[data-id]"
+            )
+            .forEach(
 
-                function openDetail() {
+                function (card) {
 
-                    go(
-                        "detail?id=" +
-                        encodeURIComponent(card.dataset.id)
+
+                    function openDetail() {
+
+                        go(
+
+                            "detail?id=" +
+
+                            encodeURIComponent(
+                                card.dataset.id
+                            )
+
+                        );
+                    }
+
+
+                    card.addEventListener(
+
+                        "click",
+
+                        openDetail
+
                     );
+
+
+                    card.addEventListener(
+
+                        "keydown",
+
+                        function (event) {
+
+                            if (
+                                event.key === "Enter"
+                                ||
+                                event.key === " "
+                            ) {
+
+                                event.preventDefault();
+
+                                openDetail();
+
+                            }
+                        }
+
+                    );
+
                 }
 
-
-                card.addEventListener(
-                    "click",
-                    openDetail
-                );
-
-
-                card.addEventListener(
-                    "keydown",
-                    function (event) {
-
-                        if (
-                            event.key === "Enter" ||
-                            event.key === " "
-                        ) {
-
-                            event.preventDefault();
-                            openDetail();
-                        }
-                    }
-                );
-            });
+            );
     }
 
 
     // =========================
-    // 类型筛选按钮
+    // 类型筛选
     // =========================
 
     function filterChips(active) {
 
         const types = [
+
             ["all", "全部"],
+
             ["lost", "寻物"],
+
             ["found", "招领"]
+
         ];
 
 
         return `
+
         <div class="chips">
 
-            ${types.map(function (item) {
+            ${
+                types.map(
 
-                const value = item[0];
-                const label = item[1];
+                    function (item) {
 
-                return `
-                <button
-                    type="button"
-                    data-type="${value}"
-                    class="chip ${
-                        active === value
-                            ? "active"
-                            : ""
-                    }"
-                >
-                    ${label}
-                </button>
-                `;
+                        return `
 
-            }).join("")}
+                        <button
+                            type="button"
+                            data-type="${item[0]}"
+                            class="chip ${
+                                active === item[0]
+                                    ? "active"
+                                    : ""
+                            }"
+                        >
+
+                            ${item[1]}
+
+                        </button>
+
+                        `;
+
+                    }
+
+                ).join("")
+            }
 
         </div>
+
         `;
     }
 
 
     // =========================
-    // 无搜索结果
+    // 空数据提示
     // =========================
 
-    function emptyState() {
+    function emptyState(
+        title,
+        text
+    ) {
 
         return `
+
         <div class="empty-state">
 
-            <div>🔎</div>
+            <div>
+                🔎
+            </div>
 
-            <h3>没有找到相关信息</h3>
+            <h3>
+
+                ${escapeHtml(title)}
+
+            </h3>
 
             <p>
-                试试缩短关键词、
-                清空分类或更换地点。
+
+                ${escapeHtml(text)}
+
             </p>
 
         </div>
+
         `;
     }
 
@@ -326,17 +694,26 @@
         <section class="hero">
 
             <span class="eyebrow">
+
                 校园失物招领
+
             </span>
 
+
             <h1>
+
                 今天想找什么？
+
             </h1>
 
+
             <p>
+
                 集中浏览校园里的失物招领信息，
                 快速找到重要线索。
+
             </p>
+
 
             <button
                 class="search-entry"
@@ -347,14 +724,64 @@
                 ⌕
 
                 <span>
+
                     搜索校园卡、雨伞、钥匙……
+
                 </span>
 
                 <strong>
+
                     搜索
+
                 </strong>
 
             </button>
+
+
+            <div class="quick-actions">
+
+                <button
+                    class="action-card lost"
+                    data-go="publish?type=lost"
+                    type="button"
+                >
+
+                    <span>
+
+                        我丢东西了
+
+                    </span>
+
+                    <strong>
+
+                        发布寻物启事 →
+
+                    </strong>
+
+                </button>
+
+
+                <button
+                    class="action-card found"
+                    data-go="publish?type=found"
+                    type="button"
+                >
+
+                    <span>
+
+                        我捡到东西
+
+                    </span>
+
+                    <strong>
+
+                        发布招领信息 →
+
+                    </strong>
+
+                </button>
+
+            </div>
 
         </section>
 
@@ -364,42 +791,160 @@
             <div>
 
                 <span class="eyebrow">
+
                     校园寻物
+
                 </span>
 
                 <h2>
+
                     最新信息
+
                 </h2>
 
             </div>
 
+
             <span class="count-pill">
+
                 ${items.length} 条
+
             </span>
 
         </div>
 
 
-        <div class="card-list">
+        <div id="homeFilters">
 
-            ${items.map(itemCard).join("")}
+            ${filterChips("all")}
 
         </div>
+
+
+        <div
+            class="card-list"
+            id="homeList"
+        >
+
+            ${
+                items
+                    .map(itemCard)
+                    .join("")
+            }
+
+        </div>
+
         `;
 
 
         document
-            .getElementById("homeSearch")
-            .addEventListener(
-                "click",
-                function () {
+            .getElementById(
+                "homeSearch"
+            )
+            .onclick =
+            function () {
 
-                    go("search");
+                go("search");
+
+            };
+
+
+        document
+            .querySelectorAll(
+                "[data-go]"
+            )
+            .forEach(
+
+                function (button) {
+
+                    button.onclick =
+                        function () {
+
+                            go(
+                                button.dataset.go
+                            );
+
+                        };
+
                 }
+
             );
 
 
-        bindItemCards();
+        bindHomeFilters();
+
+        bindCards();
+    }
+
+
+    // =========================
+    // 首页类型筛选
+    // =========================
+
+    function bindHomeFilters() {
+
+        document
+            .querySelectorAll(
+                "#homeFilters [data-type]"
+            )
+            .forEach(
+
+                function (button) {
+
+                    button.onclick =
+                        function () {
+
+
+                            const filtered =
+                                Core.filterItems(
+
+                                    items,
+
+                                    {
+                                        type:
+                                            button.dataset.type
+                                    }
+
+                                );
+
+
+                            document
+                                .getElementById(
+                                    "homeFilters"
+                                )
+                                .innerHTML =
+                                filterChips(
+                                    button.dataset.type
+                                );
+
+
+                            document
+                                .getElementById(
+                                    "homeList"
+                                )
+                                .innerHTML =
+
+                                filtered.length
+
+                                    ? filtered
+                                        .map(itemCard)
+                                        .join("")
+
+                                    : emptyState(
+                                        "暂时没有这类信息",
+                                        "换一个分类看看吧。"
+                                    );
+
+
+                            bindHomeFilters();
+
+                            bindCards();
+
+                        };
+
+                }
+
+            );
     }
 
 
@@ -413,34 +958,53 @@
 
 
         const query =
-            params.get("q") || "";
+            params.get("q")
+            || "";
 
 
         const type =
-            params.get("type") || "all";
+            params.get("type")
+            || "all";
 
 
         const category =
-            params.get("category") || "all";
+            params.get("category")
+            || "all";
 
 
         const locationText =
-            params.get("location") || "";
+            params.get("location")
+            || "";
 
 
-        const results = Core.filterItems(
-            items,
-            {
-                query: query,
-                type: type,
-                category: category,
-                location: locationText
-            }
-        );
+        const results =
+            Core.filterItems(
+
+                items,
+
+                {
+
+                    query:
+                        query,
+
+                    type:
+                        type,
+
+                    category:
+                        category,
+
+                    location:
+                        locationText
+
+                }
+
+            );
 
 
         const categories =
-            Core.uniqueCategories(items);
+            Core.uniqueCategories(
+                items
+            );
 
 
         view.innerHTML = `
@@ -448,16 +1012,24 @@
         <div class="page-title">
 
             <span class="eyebrow">
+
                 快速定位线索
+
             </span>
 
+
             <h1>
+
                 搜索信息
+
             </h1>
 
+
             <p>
-                支持按物品名称、
-                分类、地点和寻物类型组合查询。
+
+                支持按物品名称、分类、
+                地点和寻物类型组合查询。
+
             </p>
 
         </div>
@@ -470,7 +1042,7 @@
 
             <label class="search-box">
 
-                <span>⌕</span>
+                ⌕
 
                 <input
                     name="q"
@@ -480,7 +1052,9 @@
                 >
 
                 <button type="submit">
+
                     搜索
+
                 </button>
 
             </label>
@@ -489,30 +1063,45 @@
             <div class="advanced-filters">
 
                 <label>
+
                     物品分类
 
                     <select name="category">
 
                         <option value="all">
+
                             全部分类
+
                         </option>
 
-                        ${categories.map(function (c) {
+                        ${
+                            categories
+                                .map(
 
-                            return `
-                            <option
-                                value="${escapeHtml(c)}"
-                                ${
-                                    c === category
-                                        ? "selected"
-                                        : ""
-                                }
-                            >
-                                ${escapeHtml(c)}
-                            </option>
-                            `;
+                                    function (c) {
 
-                        }).join("")}
+                                        return `
+
+                                        <option
+                                            value="${escapeHtml(c)}"
+                                            ${
+                                                c === category
+                                                    ? "selected"
+                                                    : ""
+                                            }
+                                        >
+
+                                            ${escapeHtml(c)}
+
+                                        </option>
+
+                                        `;
+
+                                    }
+
+                                )
+                                .join("")
+                        }
 
                     </select>
 
@@ -520,6 +1109,7 @@
 
 
                 <label>
+
                     地点包含
 
                     <input
@@ -534,7 +1124,9 @@
 
 
             <div id="searchType">
+
                 ${filterChips(type)}
+
             </div>
 
         </form>
@@ -543,14 +1135,18 @@
         <div class="results-summary">
 
             <strong>
+
                 ${results.length}
+
             </strong>
 
             条结果
 
             ${
                 query
+
                     ? `，关键词“${escapeHtml(query)}”`
+
                     : ""
             }
 
@@ -561,16 +1157,26 @@
 
             ${
                 results.length
-                    ? results.map(itemCard).join("")
-                    : emptyState()
+
+                    ? results
+                        .map(itemCard)
+                        .join("")
+
+                    : emptyState(
+                        "没有找到相关信息",
+                        "试试缩短关键词、清空分类或更换地点。"
+                    )
             }
 
         </div>
+
         `;
 
 
         const form =
-            document.getElementById("searchForm");
+            document.getElementById(
+                "searchForm"
+            );
 
 
         function submit(nextType) {
@@ -579,106 +1185,648 @@
                 new FormData(form);
 
 
-            const nextParams =
+            const next =
                 new URLSearchParams();
 
 
-            const keyword =
-                data.get("q");
+            if (
+                data.get("q")
+            ) {
 
-
-            const currentCategory =
-                data.get("category");
-
-
-            const currentLocation =
-                data.get("location");
-
-
-            if (keyword) {
-
-                nextParams.set(
+                next.set(
                     "q",
-                    keyword
+                    data.get("q")
                 );
+
             }
 
 
-            nextParams.set(
+            next.set(
+
                 "type",
+
                 nextType || type
+
             );
 
 
-            nextParams.set(
+            next.set(
+
                 "category",
-                currentCategory
+
+                data.get("category")
+
             );
 
 
-            if (currentLocation) {
+            if (
+                data.get("location")
+            ) {
 
-                nextParams.set(
+                next.set(
+
                     "location",
-                    currentLocation
+
+                    data.get("location")
+
                 );
+
             }
 
 
             go(
+
                 "search?" +
-                nextParams.toString()
+
+                next.toString()
+
             );
+
         }
 
 
-        form.addEventListener(
-            "submit",
+        form.onsubmit =
             function (event) {
 
                 event.preventDefault();
+
                 submit();
-            }
-        );
+
+            };
 
 
-        form.category.addEventListener(
-            "change",
+        form.category.onchange =
             function () {
 
                 submit();
-            }
-        );
+
+            };
 
 
-        form.location.addEventListener(
-            "change",
+        form.location.onchange =
             function () {
 
                 submit();
-            }
-        );
+
+            };
 
 
         document
             .querySelectorAll(
                 "#searchType [data-type]"
             )
-            .forEach(function (button) {
+            .forEach(
 
-                button.addEventListener(
-                    "click",
-                    function () {
+                function (button) {
 
-                        submit(
-                            button.dataset.type
+                    button.onclick =
+                        function () {
+
+                            submit(
+                                button.dataset.type
+                            );
+
+                        };
+
+                }
+
+            );
+
+
+        bindCards();
+    }
+
+
+    // =========================
+    // 发布页面
+    // =========================
+
+    function renderPublish(params) {
+
+        setNav("publish");
+
+
+        const selectedType =
+
+            params.get("type")
+            === "found"
+
+                ? "found"
+
+                : "lost";
+
+
+        view.innerHTML = `
+
+        <div class="page-title">
+
+            <span class="eyebrow">
+
+                补充一条校园线索
+
+            </span>
+
+
+            <h1>
+
+                发布信息
+
+            </h1>
+
+
+            <p>
+
+                信息越清晰，
+                物品越容易回到主人身边。
+
+            </p>
+
+        </div>
+
+
+        <form
+            class="form-card"
+            id="publishForm"
+            novalidate
+        >
+
+
+            <fieldset>
+
+                <legend>
+
+                    信息类型
+
+                </legend>
+
+
+                <div class="segmented">
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="type"
+                            value="lost"
+                            ${
+                                selectedType
+                                === "lost"
+
+                                    ? "checked"
+
+                                    : ""
+                            }
+                        >
+
+                        <span>
+
+                            🔍 寻物信息
+
+                        </span>
+
+                    </label>
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="type"
+                            value="found"
+                            ${
+                                selectedType
+                                === "found"
+
+                                    ? "checked"
+
+                                    : ""
+                            }
+                        >
+
+                        <span>
+
+                            🙌 招领信息
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <small
+                    data-error="type"
+                ></small>
+
+            </fieldset>
+
+
+            <div class="form-grid">
+
+
+                <label>
+
+                    物品名称
+
+                    <input
+                        name="title"
+                        placeholder="例如：白色蓝牙耳机"
+                    >
+
+                    <small
+                        data-error="title"
+                    ></small>
+
+                </label>
+
+
+                <label>
+
+                    物品分类
+
+                    <select
+                        name="category"
+                    >
+
+                        <option value="">
+
+                            请选择分类
+
+                        </option>
+
+
+                        ${
+                            Object
+                                .keys(ICONS)
+                                .map(
+
+                                    function (c) {
+
+                                        return `
+
+                                        <option value="${c}">
+
+                                            ${c}
+
+                                        </option>
+
+                                        `;
+
+                                    }
+
+                                )
+                                .join("")
+                        }
+
+                    </select>
+
+                    <small
+                        data-error="category"
+                    ></small>
+
+                </label>
+
+
+                <label>
+
+                    时间
+
+                    <input
+                        name="date"
+                        type="date"
+                    >
+
+                    <small
+                        data-error="date"
+                    ></small>
+
+                </label>
+
+
+                <label>
+
+                    地点
+
+                    <input
+                        name="location"
+                        placeholder="例如：图书馆二楼"
+                    >
+
+                    <small
+                        data-error="location"
+                    ></small>
+
+                </label>
+
+            </div>
+
+
+            <label>
+
+                详细描述
+
+                <textarea
+                    name="description"
+                    rows="4"
+                    placeholder="颜色、特征、发现位置等，至少 5 个字"
+                ></textarea>
+
+                <small
+                    data-error="description"
+                ></small>
+
+            </label>
+
+
+            <label>
+
+                联系方式
+
+                <input
+                    name="contact"
+                    placeholder="11 位手机号或邮箱"
+                >
+
+                <small
+                    data-error="contact"
+                ></small>
+
+            </label>
+
+
+            <div class="privacy-note">
+
+                🔒 联系方式仅在详情页展示，
+                请勿填写密码或其他敏感信息。
+
+            </div>
+
+
+            <button
+                class="primary-button"
+                type="submit"
+            >
+
+                确认发布
+
+            </button>
+
+        </form>
+
+        `;
+
+
+        const form =
+            document.getElementById(
+                "publishForm"
+            );
+
+
+        // 自动填写当天日期
+        form.date.value =
+            new Date()
+                .toISOString()
+                .slice(0, 10);
+
+
+        form.onsubmit =
+            function (event) {
+
+                event.preventDefault();
+
+
+                // 清空上一次错误
+                document
+                    .querySelectorAll(
+                        "[data-error]"
+                    )
+                    .forEach(
+
+                        function (node) {
+
+                            node.textContent =
+                                "";
+
+                        }
+
+                    );
+
+
+                const draft =
+                    Object.fromEntries(
+
+                        new FormData(
+                            form
+                        ).entries()
+
+                    );
+
+
+                const result =
+                    Core.buildItem(
+
+                        draft,
+
+                        Date.now()
+
+                    );
+
+
+                // 表单校验失败
+                if (!result.item) {
+
+
+                    Object
+                        .entries(
+                            result.errors
+                        )
+                        .forEach(
+
+                            function (entry) {
+
+                                const key =
+                                    entry[0];
+
+                                const value =
+                                    entry[1];
+
+
+                                const node =
+                                    document.querySelector(
+
+                                        `[data-error="${key}"]`
+
+                                    );
+
+
+                                if (node) {
+
+                                    node.textContent =
+                                        value;
+
+                                }
+
+                            }
+
                         );
-                    }
+
+
+                    showToast(
+                        "请检查表单中的必填信息"
+                    );
+
+
+                    return;
+                }
+
+
+                // 添加到最前面
+                items.unshift(
+                    result.item
                 );
-            });
 
 
-        bindItemCards();
+                // 保存到 localStorage
+                saveItems();
+
+
+                // 保存刚刚发布的 ID
+                sessionStorage.setItem(
+
+                    "lastPublishedId",
+
+                    result.item.id
+
+                );
+
+
+                // 跳转发布成功页面
+                go("success");
+
+            };
+    }
+
+
+    // =========================
+    // 发布成功
+    // =========================
+
+    function renderSuccess() {
+
+        setNav("publish");
+
+
+        const id =
+            sessionStorage.getItem(
+                "lastPublishedId"
+            );
+
+
+        view.innerHTML = `
+
+        <div class="success-card">
+
+            <div class="success-check">
+
+                ✓
+
+            </div>
+
+
+            <span class="eyebrow">
+
+                操作成功
+
+            </span>
+
+
+            <h1>
+
+                发布成功！
+
+            </h1>
+
+
+            <p>
+
+                信息已保存到首页，
+                其他同学可以通过关键词搜索到它。
+
+            </p>
+
+
+            <div class="success-actions">
+
+                <button
+                    class="primary-button"
+                    id="goHome"
+                    type="button"
+                >
+
+                    返回首页
+
+                </button>
+
+
+                ${
+                    id
+
+                        ? `
+
+                        <button
+                            class="secondary-button"
+                            id="goDetail"
+                            type="button"
+                        >
+
+                            查看刚发布的信息
+
+                        </button>
+
+                        `
+
+                        : ""
+                }
+
+            </div>
+
+        </div>
+
+        `;
+
+
+        document
+            .getElementById(
+                "goHome"
+            )
+            .onclick =
+            function () {
+
+                go("home");
+
+            };
+
+
+        if (id) {
+
+            document
+                .getElementById(
+                    "goDetail"
+                )
+                .onclick =
+                function () {
+
+                    go(
+
+                        "detail?id=" +
+
+                        encodeURIComponent(id)
+
+                    );
+
+                };
+
+        }
     }
 
 
@@ -691,64 +1839,65 @@
         setNav("");
 
 
-        const id =
-            params.get("id");
-
-
         const item =
-            items.find(function (currentItem) {
+            items.find(
 
-                return currentItem.id === id;
-            });
+                function (entry) {
+
+                    return (
+                        entry.id
+                        ===
+                        params.get("id")
+                    );
+
+                }
+
+            );
 
 
         if (!item) {
 
-            view.innerHTML = `
+            view.innerHTML =
 
-            <div class="empty-state">
+                emptyState(
 
-                <div>📦</div>
+                    "信息不存在",
 
-                <h3>没有找到这条信息</h3>
+                    "它可能已被删除或链接已经失效。"
 
-                <p>
-                    这条失物招领信息可能不存在。
-                </p>
+                )
+
+                +
+
+                `
 
                 <button
-                    class="secondary-button detail-back-home"
-                    id="backHome"
+                    class="primary-button"
+                    id="missingHome"
                     type="button"
                 >
+
                     返回首页
+
                 </button>
 
-            </div>
-            `;
+                `;
 
 
             document
-                .getElementById("backHome")
-                .addEventListener(
-                    "click",
-                    function () {
+                .getElementById(
+                    "missingHome"
+                )
+                .onclick =
+                function () {
 
-                        go("home");
-                    }
-                );
+                    go("home");
+
+                };
+
 
             return;
         }
-
-
-        const icon =
-            ICONS[item.category] || "📦";
-
-
-        const completed =
-            item.status === "已找到" ||
-            item.status === "已归还";
 
 
         view.innerHTML = `
@@ -758,24 +1907,35 @@
             id="detailBack"
             type="button"
         >
+
             ← 返回
+
         </button>
 
 
         <article class="detail-card">
 
-            <div class="detail-cover ${item.type}">
+            <div
+                class="detail-cover ${item.type}"
+            >
 
                 <span>
-                    ${icon}
+
+                    ${
+                        ICONS[item.category]
+                        || "📦"
+                    }
+
                 </span>
 
                 <em>
+
                     ${
                         item.type === "lost"
                             ? "寻物"
                             : "招领"
                     }
+
                 </em>
 
             </div>
@@ -783,9 +1943,12 @@
 
             <div class="detail-body">
 
+
                 <div class="item-topline">
 
-                    <span class="type-badge ${item.type}">
+                    <span
+                        class="type-badge ${item.type}"
+                    >
 
                         ${
                             item.type === "lost"
@@ -796,20 +1959,34 @@
                     </span>
 
 
-                    <span class="status-badge">
-                        ${escapeHtml(item.status)}
+                    <span
+                        class="status-badge"
+                    >
+
+                        ${escapeHtml(
+                            item.status
+                        )}
+
                     </span>
 
                 </div>
 
 
                 <h1>
-                    ${escapeHtml(item.title)}
+
+                    ${escapeHtml(
+                        item.title
+                    )}
+
                 </h1>
 
 
                 <p class="detail-description">
-                    ${escapeHtml(item.description)}
+
+                    ${escapeHtml(
+                        item.description
+                    )}
+
                 </p>
 
 
@@ -874,11 +2051,17 @@
                     <div>
 
                         <small>
+
                             发布者联系方式
+
                         </small>
 
                         <strong>
-                            ${escapeHtml(item.contact)}
+
+                            ${escapeHtml(
+                                item.contact
+                            )}
+
                         </strong>
 
                     </div>
@@ -889,32 +2072,40 @@
                         id="copyContact"
                         type="button"
                     >
+
                         一键复制
+
                     </button>
 
                 </div>
 
 
                 ${
-                    completed
+                    Core.isCompleted(item)
 
                         ? `
+
                         <div class="completed-note">
 
                             ✓ 这条信息已完成，
                             请勿重复联系发布者。
 
                         </div>
+
                         `
 
                         : `
+
                         <button
                             class="primary-button"
                             id="contactButton"
                             type="button"
                         >
+
                             复制联系方式并联系发布者
+
                         </button>
+
                         `
                 }
 
@@ -922,45 +2113,45 @@
 
         </article>
 
-
-        <div
-            class="toast"
-            id="toast"
-        >
-            联系方式已复制
-        </div>
         `;
 
 
         document
-            .getElementById("detailBack")
-            .addEventListener(
-                "click",
-                function () {
+            .getElementById(
+                "detailBack"
+            )
+            .onclick =
+            function () {
 
-                    if (history.length > 1) {
+                if (
+                    history.length > 1
+                ) {
 
-                        history.back();
-                    }
-                    else {
+                    history.back();
 
-                        go("home");
-                    }
                 }
-            );
+
+                else {
+
+                    go("home");
+
+                }
+
+            };
 
 
         document
-            .getElementById("copyContact")
-            .addEventListener(
-                "click",
-                function () {
+            .getElementById(
+                "copyContact"
+            )
+            .onclick =
+            function () {
 
-                    copyContact(
-                        item.contact
-                    );
-                }
-            );
+                copyContact(
+                    item.contact
+                );
+
+            };
 
 
         const contactButton =
@@ -971,15 +2162,15 @@
 
         if (contactButton) {
 
-            contactButton.addEventListener(
-                "click",
+            contactButton.onclick =
                 function () {
 
                     copyContact(
                         item.contact
                     );
-                }
-            );
+
+                };
+
         }
     }
 
@@ -997,26 +2188,45 @@
 
             navigator.clipboard
                 .writeText(contact)
-                .then(function () {
 
-                    showToast(
-                        "联系方式已复制"
-                    );
-                })
-                .catch(function () {
+                .then(
 
-                    fallbackCopy(contact);
-                });
+                    function () {
+
+                        showToast(
+                            "联系方式已复制"
+                        );
+
+                    }
+
+                )
+
+                .catch(
+
+                    function () {
+
+                        fallbackCopy(
+                            contact
+                        );
+
+                    }
+
+                );
+
         }
+
         else {
 
-            fallbackCopy(contact);
+            fallbackCopy(
+                contact
+            );
+
         }
     }
 
 
     // =========================
-    // 备用复制方法
+    // 兼容复制
     // =========================
 
     function fallbackCopy(text) {
@@ -1027,18 +2237,22 @@
             );
 
 
-        area.value = text;
-
-        area.style.position = "fixed";
-        area.style.opacity = "0";
+        area.value =
+            text;
 
 
-        document.body.appendChild(
-            area
-        );
+        area.style.position =
+            "fixed";
 
 
-        area.focus();
+        area.style.opacity =
+            "0";
+
+
+        document.body
+            .appendChild(area);
+
+
         area.select();
 
 
@@ -1057,65 +2271,7 @@
 
 
     // =========================
-    // Toast 提示
-    // =========================
-
-    function showToast(message) {
-
-        let toast =
-            document.getElementById(
-                "toast"
-            );
-
-
-        if (!toast) {
-
-            toast =
-                document.createElement(
-                    "div"
-                );
-
-
-            toast.id = "toast";
-            toast.className = "toast";
-
-
-            document.body.appendChild(
-                toast
-            );
-        }
-
-
-        toast.textContent =
-            message;
-
-
-        toast.classList.add(
-            "show"
-        );
-
-
-        window.clearTimeout(
-            showToast.timer
-        );
-
-
-        showToast.timer =
-            window.setTimeout(
-                function () {
-
-                    toast.classList.remove(
-                        "show"
-                    );
-
-                },
-                1800
-            );
-    }
-
-
-    // =========================
-    // 页面渲染入口
+    // 页面入口
     // =========================
 
     function render() {
@@ -1131,6 +2287,25 @@
             renderSearch(
                 route.params
             );
+
+        }
+
+        else if (
+            route.page === "publish"
+        ) {
+
+            renderPublish(
+                route.params
+            );
+
+        }
+
+        else if (
+            route.page === "success"
+        ) {
+
+            renderSuccess();
+
         }
 
         else if (
@@ -1140,18 +2315,32 @@
             renderDetail(
                 route.params
             );
+
         }
 
         else {
 
             renderHome();
+
         }
+
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
     }
 
 
     window.addEventListener(
+
         "hashchange",
+
         render
+
     );
 
 
