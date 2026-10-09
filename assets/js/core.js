@@ -36,11 +36,14 @@
     const type = normalize(filters && filters.type);
     const category = normalize(filters && filters.category);
     const location = normalize(filters && filters.location);
+    const status = normalize(filters && filters.status);
     return source.filter((item) => {
       if (query && !searchableText(item).includes(query)) return false;
       if (type && type !== "all" && item.type !== type) return false;
       if (category && category !== "all" && normalize(item.category) !== category) return false;
       if (location && !normalize(item.location).includes(location)) return false;
+      if (status === "active" && isCompleted(item)) return false;
+      if (status === "done" && !isCompleted(item)) return false;
       return true;
     });
   }

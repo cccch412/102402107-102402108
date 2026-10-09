@@ -18,7 +18,8 @@
 ├── index.html                 # 网页入口与整体结构
 ├── assets/
 │   ├── css/
-│   │   └── styles.css         # 响应式界面与视觉样式
+│   │   ├── styles.css         # 响应式界面与视觉样式
+│   │   └── overrides.css      # 横屏、局部滚动和底部导航修正
 │   └── js/
 │       ├── core.js            # 搜索、校验、状态更新等纯逻辑
 │       └── app.js             # 页面渲染、交互和本地存储
@@ -28,7 +29,7 @@
 │   ├── TEST_REPORT.md         # 测试方法、测试数据和结果说明
 │   ├── MANUAL_TESTS.md        # 14 项 Chrome 人工走查表
 │   └── GIT_GUIDE.md           # 双人 Fork、PR 与提交操作指南
-├── BLOG.md                    # 博客文章
+├── BLOG.md                    # 可直接用于博客园的作业正文模板
 ├── package.json               # 测试命令配置
 └── README.md                  # 项目说明
 ```
