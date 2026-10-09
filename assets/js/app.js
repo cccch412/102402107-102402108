@@ -2,6 +2,9 @@
   "use strict";
   const Core = window.LostFoundCore;
   const STORAGE_KEY = "shiguang-campus-items-v1";
+  const MAX_PHOTOS = 4;
+  const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+  const MAX_STORAGE_CHARS = 4000000;
   const CATEGORIES = ["证件卡类", "数码电子", "学习用品", "生活用品", "衣物配饰", "钥匙", "雨具", "其他"];
   const ICONS = { 证件卡类: "🪪", 数码电子: "🎧", 学习用品: "📚", 生活用品: "🥤", 衣物配饰: "🧣", 钥匙: "🔑", 雨具: "☂️", 其他: "📦", 校园卡: "🪪", 数码: "🎧", 书籍: "📚" };
   const seedItems = [
@@ -24,7 +27,17 @@
       return Array.isArray(saved) && saved.length ? saved : seedItems.slice();
     } catch (_) { return seedItems.slice(); }
   }
-  function saveItems() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+  function saveItems() {
+    try {
+      const serialized = JSON.stringify(items);
+      if (serialized.length > MAX_STORAGE_CHARS) throw new Error("storage-limit");
+      localStorage.setItem(STORAGE_KEY, serialized);
+      return true;
+    } catch (_) {
+      showToast("本地存储空间不足，请减少照片数量或更换较小的照片");
+      return false;
+    }
+  }
   function escapeHtml(value) {
     return String(value == null ? "" : value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
   }
@@ -145,7 +158,7 @@
       <form class="form-card" id="publishForm" novalidate>
         <fieldset><legend>信息类型</legend><div class="segmented"><label><input type="radio" name="type" value="lost" ${selectedType==="lost"?"checked":""}><span>🔍 寻物信息</span></label><label><input type="radio" name="type" value="found" ${selectedType==="found"?"checked":""}><span>🙌 招领信息</span></label></div></fieldset>
         <div class="form-grid"><label>物品名称<input name="title" placeholder="例如：白色蓝牙耳机"><small data-error="title"></small></label><label>物品分类<select name="category"><option value="">请选择分类</option>${CATEGORIES.map(c=>`<option>${c}</option>`).join("")}</select><small data-error="category"></small></label><label><span id="dateFieldLabel">${dateLabel}</span><input name="date" type="date"><small data-error="date"></small></label><label><span id="locationFieldLabel">${locationLabel}</span><input name="location" placeholder="例如：图书馆二楼"><small data-error="location"></small></label></div>
-        <label class="photo-upload-row">真实照片（可选，最多 4 张）<span class="photo-upload-control"><input id="photoInput" name="photo" type="file" accept="image/*" multiple><span>选择照片</span><small id="photoCount">已选 0/4 张，详情页可点击放大查看</small></span><span class="photo-preview hidden" id="photoPreview"></span></label>
+        <label class="photo-upload-row">真实照片（可选，最多 4 张）<span class="photo-upload-control"><input id="photoInput" name="photo" type="file" accept="image/*" multiple><span>选择照片</span><small id="photoCount">已选 0/4 张，单张不超过 2MB</small></span><span class="photo-preview hidden" id="photoPreview"></span></label>
         <label class="full-width-field">物品描述<textarea name="description" rows="3" placeholder="颜色、明显特征等，至少 5 个字"></textarea><small data-error="description"></small></label>
         <label class="full-width-field">联系方式<input name="contact" placeholder="11 位手机号或邮箱"><small data-error="contact"></small></label>
         <div class="privacy-note">🔒 联系方式仅在详情页展示，请勿填写密码或其他敏感信息。</div>
@@ -163,7 +176,7 @@
       document.getElementById("locationFieldLabel").textContent = isLost ? "丢失地点" : "拾取地点";
     });
     const renderPhotoPreviews = () => {
-      document.getElementById("photoCount").textContent = `已选 ${pendingImages.length}/4 张，详情页可点击放大查看`;
+      document.getElementById("photoCount").textContent = `已选 ${pendingImages.length}/${MAX_PHOTOS} 张，单张不超过 2MB`;
       photoPreview.innerHTML = pendingImages.map((image, index) => `<span class="photo-preview-item"><img src="${escapeHtml(image)}" alt="待上传物品照片 ${index + 1}"><button type="button" class="remove-photo" data-photo-index="${index}" aria-label="删除第 ${index + 1} 张照片">×</button></span>`).join("");
       photoPreview.classList.toggle("hidden", !pendingImages.length);
       photoPreview.querySelectorAll(".remove-photo").forEach((button) => button.onclick = (event) => {
@@ -176,14 +189,15 @@
     photoInput.onchange = async () => {
       const selectedFiles = Array.from(photoInput.files || []);
       if (!selectedFiles.length) return;
-      const available = 4 - pendingImages.length;
+      const available = MAX_PHOTOS - pendingImages.length;
       if (available <= 0) { showToast("最多只能上传 4 张照片"); photoInput.value = ""; return; }
+      if (selectedFiles.some((file) => file.size > MAX_PHOTO_BYTES)) { showToast("单张照片不能超过 2MB，请压缩后重新选择"); photoInput.value = ""; return; }
       publishButton.disabled = true;
       publishButton.textContent = "照片处理中…";
       try {
         const filesToProcess = selectedFiles.slice(0, available);
         const processed = await Promise.all(filesToProcess.map(compressPhoto));
-        pendingImages = pendingImages.concat(processed).slice(0, 4);
+        pendingImages = pendingImages.concat(processed).slice(0, MAX_PHOTOS);
         renderPhotoPreviews();
         if (selectedFiles.length > available) showToast("最多上传 4 张，超出的照片未添加");
       } catch (error) {
@@ -206,7 +220,8 @@
         Object.entries(result.errors).forEach(([key,value]) => { const node = document.querySelector(`[data-error="${key}"]`); if (node) node.textContent = value; });
         showToast("请检查标红的必填信息"); return;
       }
-      items.unshift(result.item); saveItems();
+      items.unshift(result.item);
+      if (!saveItems()) { items.shift(); return; }
       sessionStorage.setItem("lastPublishedId", result.item.id); go("success");
     };
   }
@@ -230,11 +245,12 @@
     view.innerHTML = `<article class="detail-card">${media}
       <div class="detail-body"><div class="item-topline"><span class="type-badge ${item.type}">${item.type==="lost"?"寻物":"招领"}</span><span class="status-badge">${escapeHtml(item.status)}</span></div><h1>${escapeHtml(item.title)}</h1><p class="detail-description">${escapeHtml(item.description)}</p>
       <dl class="detail-grid"><div><dt>时间</dt><dd>${escapeHtml(item.date)}</dd></div><div><dt>地点</dt><dd>${escapeHtml(item.location)}</dd></div><div><dt>分类</dt><dd>${escapeHtml(item.category)}</dd></div><div><dt>当前状态</dt><dd>${escapeHtml(item.status)}</dd></div></dl>
-      <div class="contact-card"><div><small>发布者联系方式</small><strong>${escapeHtml(item.contact)}</strong></div><button class="secondary-button" id="copyContact">复制</button></div>
-      <p class="contact-tip">联系时请说明物品特征，避免误领。</p>
-      ${Core.isCompleted(item)?`<div class="completed-note">✓ 这条信息已完成，请勿重复联系发布者。</div>`:""}</div></article>
+      ${Core.isCompleted(item)
+        ? `<div class="completed-note">✓ 这条信息已完成，无需再联系发布者。</div>`
+        : `<div class="contact-card"><div><small>发布者联系方式</small><strong>${escapeHtml(item.contact)}</strong></div><button class="secondary-button" id="copyContact">复制</button></div><p class="contact-tip">联系时请说明物品特征，避免误领。</p>`}</div></article>
       ${itemImages.length ? `<div class="photo-lightbox hidden" id="photoLightbox" role="dialog" aria-modal="true" aria-label="物品照片大图"><button type="button" class="lightbox-close" aria-label="关闭大图">×</button><button type="button" class="lightbox-step previous" aria-label="上一张">‹</button><img id="lightboxImage" alt="${escapeHtml(item.title)}的大图"><button type="button" class="lightbox-step next" aria-label="下一张">›</button><span class="lightbox-count" id="lightboxCount"></span></div>` : ""}`;
-    document.getElementById("copyContact").onclick=()=>copyContact(item.contact);
+    const copyButton = document.getElementById("copyContact");
+    if (copyButton) copyButton.onclick=()=>copyContact(item.contact);
     if (itemImages.length) {
       const lightbox = document.getElementById("photoLightbox");
       const lightboxImage = document.getElementById("lightboxImage");
@@ -257,25 +273,38 @@
   function copyContact(contact) {
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(contact).then(()=>showToast("联系方式已复制")).catch(()=>fallbackCopy(contact)); else fallbackCopy(contact);
   }
-  function fallbackCopy(text) { const area=document.createElement("textarea"); area.value=text; document.body.appendChild(area); area.select(); document.execCommand("copy"); area.remove(); showToast("联系方式已复制"); }
+  function fallbackCopy(text) {
+    const area=document.createElement("textarea"); area.value=text; area.setAttribute("readonly", "");
+    area.style.position="fixed"; area.style.opacity="0"; document.body.appendChild(area); area.select();
+    try { document.execCommand("copy"); showToast("联系方式已复制"); }
+    catch (_) { showToast("复制失败，请手动复制联系方式"); }
+    area.remove();
+  }
 
   function compressPhoto(file) {
     return new Promise((resolve, reject) => {
       if (!file || !file.type.startsWith("image/")) { reject(new Error("请选择图片文件")); return; }
-      if (file.size > 8 * 1024 * 1024) { reject(new Error("照片不能超过 8MB")); return; }
+      if (file.size > MAX_PHOTO_BYTES) { reject(new Error("单张照片不能超过 2MB，请压缩后重新选择")); return; }
       const reader = new FileReader();
       reader.onerror = () => reject(new Error("照片读取失败，请重新选择"));
       reader.onload = () => {
         const photo = new Image();
         photo.onerror = () => reject(new Error("照片格式无法识别"));
         photo.onload = () => {
-          const maxSide = 1000;
+          const maxSide = 900;
           const scale = Math.min(1, maxSide / Math.max(photo.width, photo.height));
           const canvas = document.createElement("canvas");
           canvas.width = Math.max(1, Math.round(photo.width * scale));
           canvas.height = Math.max(1, Math.round(photo.height * scale));
           canvas.getContext("2d").drawImage(photo, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL("image/jpeg", 0.78));
+          let quality = 0.76;
+          let compressed = canvas.toDataURL("image/jpeg", quality);
+          while (compressed.length > 900000 && quality > 0.44) {
+            quality -= 0.08;
+            compressed = canvas.toDataURL("image/jpeg", quality);
+          }
+          if (compressed.length > 1200000) { reject(new Error("照片压缩后仍然过大，请更换一张照片")); return; }
+          resolve(compressed);
         };
         photo.src = reader.result;
       };
@@ -291,8 +320,22 @@
       <div class="chips mine-filters"><a class="chip ${filter==="all"?"active":""}" href="#mine?filter=all">全部 ${mine.length}</a><a class="chip ${filter==="active"?"active":""}" href="#mine?filter=active">进行中</a><a class="chip ${filter==="done"?"active":""}" href="#mine?filter=done">已完成</a></div>
       <div class="manage-list">${shown.length?shown.map((item)=>`<article class="manage-card"><div class="manage-main" data-open="${escapeHtml(item.id)}"><span class="manage-icon">${ICONS[item.category]||"📦"}</span><div><span class="type-badge ${item.type}">${item.type==="lost"?"寻物":"招领"}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.location)} · ${escapeHtml(item.date)}</p></div></div><div class="manage-actions"><span class="status-badge">${escapeHtml(item.status)}</span><div class="manage-buttons"><button class="secondary-button" data-toggle="${escapeHtml(item.id)}">${Core.isCompleted(item)?"恢复为进行中":item.type==="lost"?"标记为已找到":"标记为已归还"}</button><button class="delete-button" data-delete="${escapeHtml(item.id)}">删除</button></div></div></article>`).join(""):emptyState("这里还没有信息", "发布一条寻物或招领信息后，它会显示在这里。")}</div>`;
     document.querySelectorAll("[data-open]").forEach((node)=>node.onclick=()=>go(`detail?id=${encodeURIComponent(node.dataset.open)}`));
-    document.querySelectorAll("[data-toggle]").forEach((button)=>button.onclick=()=>{items=items.map((item)=>item.id===button.dataset.toggle?Core.toggleStatus(item):item);saveItems();showToast("状态已更新，首页和详情页将同步显示");renderMine(params);});
-    document.querySelectorAll("[data-delete]").forEach((button)=>button.onclick=()=>{if(window.confirm("确定删除这条发布吗？删除后无法恢复。")){items=items.filter((item)=>item.id!==button.dataset.delete);saveItems();showToast("发布已删除");renderMine(params);}});
+    document.querySelectorAll("[data-toggle]").forEach((button)=>button.onclick=()=>{
+      const target = items.find((item)=>item.id===button.dataset.toggle);
+      const nextStatus = target && Core.isCompleted(target) ? "恢复为进行中" : target && target.type === "lost" ? "标记为已找到" : "标记为已归还";
+      if (!window.confirm(`确定要${nextStatus}吗？`)) return;
+      const previousItems = items;
+      items=items.map((item)=>item.id===button.dataset.toggle?Core.toggleStatus(item):item);
+      if (!saveItems()) { items=previousItems; return; }
+      showToast("状态已更新，首页和详情页将同步显示"); renderMine(params);
+    });
+    document.querySelectorAll("[data-delete]").forEach((button)=>button.onclick=()=>{
+      if (!window.confirm("确定删除这条发布吗？删除后无法恢复。")) return;
+      const previousItems = items;
+      items=items.filter((item)=>item.id!==button.dataset.delete);
+      if (!saveItems()) { items=previousItems; return; }
+      showToast("发布已删除"); renderMine(params);
+    });
   }
 
   function render() {
@@ -303,5 +346,11 @@
   }
   backButton.onclick=()=>history.length>1?history.back():go("home");
   resetButton.onclick=()=>{ if(window.confirm("确定恢复示例数据吗？你在本浏览器发布的内容将被清空。")){items=seedItems.slice();saveItems();showToast("已恢复示例数据");render();} };
+  window.addEventListener("keydown", (event) => {
+    const lightbox = document.getElementById("photoLightbox");
+    if (event.key === "Escape" && lightbox && !lightbox.classList.contains("hidden")) {
+      lightbox.classList.add("hidden"); document.body.classList.remove("lightbox-open");
+    }
+  });
   window.addEventListener("hashchange",render); render();
 })();
