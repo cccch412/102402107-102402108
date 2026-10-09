@@ -2,12 +2,13 @@
   "use strict";
   const Core = window.LostFoundCore;
   const STORAGE_KEY = "shiguang-campus-items-v1";
-  const ICONS = { 校园卡: "🪪", 数码: "🎧", 雨具: "☂️", 钥匙: "🔑", 书籍: "📚", 其他: "📦" };
+  const CATEGORIES = ["证件卡类", "数码电子", "学习用品", "生活用品", "衣物配饰", "钥匙", "雨具", "其他"];
+  const ICONS = { 证件卡类: "🪪", 数码电子: "🎧", 学习用品: "📚", 生活用品: "🥤", 衣物配饰: "🧣", 钥匙: "🔑", 雨具: "☂️", 其他: "📦", 校园卡: "🪪", 数码: "🎧", 书籍: "📚" };
   const seedItems = [
-    { id: "seed-1", type: "found", title: "拾到一张校园卡", category: "校园卡", date: "2026-09-26", location: "第一教学楼 302", description: "下课后在第三排座位旁发现，请失主联系时说明姓名和学号后四位。", contact: "13800138000", status: "等待认领", mine: false, createdAt: 1790437800000 },
-    { id: "seed-2", type: "lost", title: "寻找白色蓝牙耳机", category: "数码", date: "2026-09-25", location: "图书馆二楼", description: "白色充电盒，右侧有一枚蓝色贴纸，可能遗落在靠窗自习区。", contact: "student@example.com", status: "寻找中", mine: true, createdAt: 1790355900000 },
+    { id: "seed-1", type: "found", title: "拾到一张校园卡", category: "证件卡类", date: "2026-09-26", location: "第一教学楼 302", description: "下课后在第三排座位旁发现，请失主联系时说明姓名和学号后四位。", contact: "13800138000", status: "等待认领", mine: false, createdAt: 1790437800000 },
+    { id: "seed-2", type: "lost", title: "寻找白色蓝牙耳机", category: "数码电子", date: "2026-09-25", location: "图书馆二楼", description: "白色充电盒，右侧有一枚蓝色贴纸，可能遗落在靠窗自习区。", contact: "student@example.com", status: "寻找中", mine: true, createdAt: 1790355900000 },
     { id: "seed-3", type: "found", title: "蓝色折叠雨伞待认领", category: "雨具", date: "2026-09-24", location: "博学楼 A 区", description: "深蓝色八骨折叠伞，伞柄系有白色挂绳。", contact: "13900139000", status: "等待认领", mine: true, createdAt: 1790266800000 },
-    { id: "seed-4", type: "lost", title: "寻找蓝色校园卡套", category: "校园卡", date: "2026-09-23", location: "运动场", description: "蓝色透明卡套，挂有一个小熊钥匙扣。", contact: "lost@example.com", status: "已找到", mine: false, createdAt: 1790180400000 },
+    { id: "seed-4", type: "lost", title: "寻找蓝色校园卡套", category: "证件卡类", date: "2026-09-23", location: "运动场", description: "蓝色透明卡套，挂有一个小熊钥匙扣。", contact: "lost@example.com", status: "已找到", mine: false, createdAt: 1790180400000 },
     { id: "seed-5", type: "found", title: "教学楼门口捡到钥匙", category: "钥匙", date: "2026-09-22", location: "至诚楼门口", description: "两把钥匙和一枚绿色门禁扣，放在保安室。", contact: "13700137000", status: "已归还", mine: false, createdAt: 1790094000000 }
   ];
 
@@ -68,9 +69,9 @@
     setNav("home");
     const activeItems = Core.filterItems(items, { status: "active" }).sort((a,b)=>b.createdAt-a.createdAt);
     view.innerHTML = `<div class="hero"><button class="search-entry" id="homeSearch" type="button">⌕ <span>搜索校园卡、雨伞、钥匙……</span><kbd>搜索</kbd></button>
-      <span class="eyebrow">下午好，同学 👋</span><h1>今天想找什么？</h1><p>集中发布、快速搜索，别让重要线索被群聊淹没。</p>
+      <span class="hero-greeting">下午好，同学 👋</span><h1>今天想找什么？</h1><p>丢了东西别着急，来这里找找看。</p>
       <div class="quick-actions"><button class="action-card lost" data-go="publish?type=lost"><span>我丢东西了</span><strong>发布寻物启事 →</strong></button><button class="action-card found" data-go="publish?type=found"><span>我捡到东西</span><strong>发布招领信息 →</strong></button></div></div>
-      <div class="section-heading"><div><span class="eyebrow">校园寻物</span><div class="section-title-row"><h2>最新信息</h2><span class="result-count" id="homeCount">共 ${activeItems.length} 条</span></div></div></div>
+      <div class="section-heading"><div class="section-title-row"><h2>最新信息</h2><span class="result-count" id="homeCount">共 ${activeItems.length} 条</span></div><span class="campus-label">校园寻物</span></div>
       <div id="homeFilters">${filterChips("all")}</div><div class="card-list" id="homeList">${activeItems.length ? activeItems.map(itemCard).join("") : emptyState("暂时没有进行中的信息", "可以发布一条新的寻物或招领信息。")}</div>
       <a class="history-link" href="#completed">查看已完成信息 <span>›</span></a>`;
     document.getElementById("homeSearch").onclick = () => go("search");
@@ -102,9 +103,8 @@
     const locationText = params.get("location") || "";
     const status = params.get("status") || "active";
     const results = Core.filterItems(items, { query, type, category, location: locationText, status });
-    const categories = Core.uniqueCategories(items);
-    view.innerHTML = `<div class="page-title"><span class="eyebrow">快速定位线索</span><h1>搜索信息</h1><p>支持按名称、描述、分类和地点组合查询。</p></div>
-      <form class="search-panel" id="searchForm"><label class="search-box">⌕<input name="q" value="${escapeHtml(query)}" placeholder="输入物品名称或关键词" autocomplete="off"><button type="submit">搜索</button></label>
+    const categories = Array.from(new Set(CATEGORIES.concat(Core.uniqueCategories(items))));
+    view.innerHTML = `<form class="search-panel" id="searchForm"><label class="search-box">⌕<input name="q" value="${escapeHtml(query)}" placeholder="输入物品名称或关键词" autocomplete="off"><button type="submit">搜索</button></label>
       <div class="advanced-filters"><label>物品分类<select name="category"><option value="all">全部分类</option>${categories.map(c=>`<option ${c===category?"selected":""}>${escapeHtml(c)}</option>`).join("")}</select></label><label>地点包含<input name="location" value="${escapeHtml(locationText)}" placeholder="如：图书馆"></label></div>
       <div id="searchType">${filterChips(type)}</div><div id="searchStatus">${statusChips(status)}</div></form>
       <div class="results-summary"><strong>${results.length}</strong> 条结果${query ? `，关键词“${escapeHtml(query)}”` : ""}</div>
@@ -129,7 +129,7 @@
     setNav("completed");
     const type = params.get("type") || "all";
     const completed = Core.filterItems(items, { type, status: "done" }).sort((a,b)=>b.createdAt-a.createdAt);
-    view.innerHTML = `<div class="page-title completed-title"><span class="eyebrow">历史记录</span><h1>已完成信息</h1><p>这里保留已经找到或归还的记录，不占用首页的进行中列表。</p></div>
+    view.innerHTML = `<div class="completed-title"><span class="eyebrow">历史记录</span></div>
       <div class="completed-toolbar"><div id="completedFilters">${filterChips(type)}</div><span class="result-count" id="completedCount">共 ${completed.length} 条</span></div>
       <div class="card-list completed-list">${completed.length ? completed.map(itemCard).join("") : emptyState("暂无已完成信息", "完成的信息会保留在这里。")}</div>`;
     document.querySelectorAll("#completedFilters [data-type]").forEach((button) => button.onclick = () => go(`completed?type=${button.dataset.type}`));
@@ -139,21 +139,68 @@
   function renderPublish(params) {
     setNav("publish");
     const selectedType = params.get("type") === "found" ? "found" : "lost";
-    view.innerHTML = `<div class="page-title"><span class="eyebrow">补充一条校园线索</span><h1>发布信息</h1><p>信息越清晰，物品越容易回到主人身边。</p></div>
+    const dateLabel = selectedType === "lost" ? "丢失时间" : "拾取时间";
+    const locationLabel = selectedType === "lost" ? "丢失地点" : "拾取地点";
+    view.innerHTML = `<div class="publish-intro"><h1>发布信息</h1><p>把关键信息写清楚，更容易被找到。</p></div>
       <form class="form-card" id="publishForm" novalidate>
         <fieldset><legend>信息类型</legend><div class="segmented"><label><input type="radio" name="type" value="lost" ${selectedType==="lost"?"checked":""}><span>🔍 寻物信息</span></label><label><input type="radio" name="type" value="found" ${selectedType==="found"?"checked":""}><span>🙌 招领信息</span></label></div></fieldset>
-        <div class="form-grid"><label>物品名称<input name="title" placeholder="例如：白色蓝牙耳机"><small data-error="title"></small></label><label>物品分类<select name="category"><option value="">请选择分类</option>${Object.keys(ICONS).map(c=>`<option>${c}</option>`).join("")}</select><small data-error="category"></small></label><label>时间<input name="date" type="date"><small data-error="date"></small></label><label>地点<input name="location" placeholder="例如：图书馆二楼"><small data-error="location"></small></label></div>
-        <label>详细描述<textarea name="description" rows="4" placeholder="颜色、特征、发现位置等，至少 5 个字"></textarea><small data-error="description"></small></label>
-        <label>联系方式<input name="contact" placeholder="11 位手机号或邮箱"><small data-error="contact"></small></label>
+        <div class="form-grid"><label>物品名称<input name="title" placeholder="例如：白色蓝牙耳机"><small data-error="title"></small></label><label>物品分类<select name="category"><option value="">请选择分类</option>${CATEGORIES.map(c=>`<option>${c}</option>`).join("")}</select><small data-error="category"></small></label><label><span id="dateFieldLabel">${dateLabel}</span><input name="date" type="date"><small data-error="date"></small></label><label><span id="locationFieldLabel">${locationLabel}</span><input name="location" placeholder="例如：图书馆二楼"><small data-error="location"></small></label></div>
+        <label class="photo-upload-row">真实照片（可选，最多 4 张）<span class="photo-upload-control"><input id="photoInput" name="photo" type="file" accept="image/*" multiple><span>选择照片</span><small id="photoCount">已选 0/4 张，详情页可点击放大查看</small></span><span class="photo-preview hidden" id="photoPreview"></span></label>
+        <label class="full-width-field">物品描述<textarea name="description" rows="3" placeholder="颜色、明显特征等，至少 5 个字"></textarea><small data-error="description"></small></label>
+        <label class="full-width-field">联系方式<input name="contact" placeholder="11 位手机号或邮箱"><small data-error="contact"></small></label>
         <div class="privacy-note">🔒 联系方式仅在详情页展示，请勿填写密码或其他敏感信息。</div>
         <button class="primary-button" type="submit">确认发布</button>
       </form>`;
     const form = document.getElementById("publishForm");
+    const photoInput = document.getElementById("photoInput");
+    const photoPreview = document.getElementById("photoPreview");
+    const publishButton = form.querySelector(".primary-button");
+    let pendingImages = [];
     form.date.value = new Date().toISOString().slice(0,10);
+    form.querySelectorAll('input[name="type"]').forEach((radio) => radio.onchange = () => {
+      const isLost = radio.value === "lost";
+      document.getElementById("dateFieldLabel").textContent = isLost ? "丢失时间" : "拾取时间";
+      document.getElementById("locationFieldLabel").textContent = isLost ? "丢失地点" : "拾取地点";
+    });
+    const renderPhotoPreviews = () => {
+      document.getElementById("photoCount").textContent = `已选 ${pendingImages.length}/4 张，详情页可点击放大查看`;
+      photoPreview.innerHTML = pendingImages.map((image, index) => `<span class="photo-preview-item"><img src="${escapeHtml(image)}" alt="待上传物品照片 ${index + 1}"><button type="button" class="remove-photo" data-photo-index="${index}" aria-label="删除第 ${index + 1} 张照片">×</button></span>`).join("");
+      photoPreview.classList.toggle("hidden", !pendingImages.length);
+      photoPreview.querySelectorAll(".remove-photo").forEach((button) => button.onclick = (event) => {
+        event.preventDefault(); event.stopPropagation();
+        pendingImages.splice(Number(button.dataset.photoIndex), 1);
+        photoInput.value = "";
+        renderPhotoPreviews(); showToast("已移除照片");
+      });
+    };
+    photoInput.onchange = async () => {
+      const selectedFiles = Array.from(photoInput.files || []);
+      if (!selectedFiles.length) return;
+      const available = 4 - pendingImages.length;
+      if (available <= 0) { showToast("最多只能上传 4 张照片"); photoInput.value = ""; return; }
+      publishButton.disabled = true;
+      publishButton.textContent = "照片处理中…";
+      try {
+        const filesToProcess = selectedFiles.slice(0, available);
+        const processed = await Promise.all(filesToProcess.map(compressPhoto));
+        pendingImages = pendingImages.concat(processed).slice(0, 4);
+        renderPhotoPreviews();
+        if (selectedFiles.length > available) showToast("最多上传 4 张，超出的照片未添加");
+      } catch (error) {
+        showToast(error.message || "照片读取失败，请重新选择");
+      } finally {
+        photoInput.value = "";
+        publishButton.disabled = false;
+        publishButton.textContent = "确认发布";
+      }
+    };
     form.onsubmit = (event) => {
       event.preventDefault();
       document.querySelectorAll("[data-error]").forEach((n)=>n.textContent="");
       const draft = Object.fromEntries(new FormData(form).entries());
+      delete draft.photo;
+      draft.images = pendingImages.slice();
+      draft.image = pendingImages[0] || "";
       const result = Core.buildItem(draft, Date.now());
       if (!result.item) {
         Object.entries(result.errors).forEach(([key,value]) => { const node = document.querySelector(`[data-error="${key}"]`); if (node) node.textContent = value; });
@@ -176,24 +223,71 @@
     setNav("detail");
     const item = items.find((entry)=>entry.id===params.get("id"));
     if (!item) { view.innerHTML=emptyState("信息不存在", "它可能已被删除或链接已经失效。") + `<button class="primary-button" id="missingHome">返回首页</button>`; document.getElementById("missingHome").onclick=()=>go("home"); return; }
-    view.innerHTML = `<article class="detail-card"><div class="detail-cover ${item.type}"><span>${ICONS[item.category]||"📦"}</span><em>${item.type==="lost"?"寻物":"招领"}</em></div>
+    const itemImages = (Array.isArray(item.images) ? item.images : [item.image]).filter((image) => typeof image === "string" && /^data:image\//.test(image)).slice(0, 4);
+    const media = itemImages.length
+      ? `<div class="detail-gallery count-${itemImages.length}" aria-label="物品照片">${itemImages.map((image, index) => `<button type="button" class="detail-photo" data-photo-index="${index}" aria-label="放大查看第 ${index + 1} 张照片"><img src="${escapeHtml(image)}" alt="${escapeHtml(item.title)}的物品照片 ${index + 1}"></button>`).join("")}</div>`
+      : `<div class="detail-cover ${item.type}"><span>${ICONS[item.category]||"📦"}</span></div>`;
+    view.innerHTML = `<article class="detail-card">${media}
       <div class="detail-body"><div class="item-topline"><span class="type-badge ${item.type}">${item.type==="lost"?"寻物":"招领"}</span><span class="status-badge">${escapeHtml(item.status)}</span></div><h1>${escapeHtml(item.title)}</h1><p class="detail-description">${escapeHtml(item.description)}</p>
       <dl class="detail-grid"><div><dt>时间</dt><dd>${escapeHtml(item.date)}</dd></div><div><dt>地点</dt><dd>${escapeHtml(item.location)}</dd></div><div><dt>分类</dt><dd>${escapeHtml(item.category)}</dd></div><div><dt>当前状态</dt><dd>${escapeHtml(item.status)}</dd></div></dl>
-      <div class="contact-card"><div><small>发布者联系方式</small><strong>${escapeHtml(item.contact)}</strong></div><button class="secondary-button" id="copyContact">一键复制</button></div>
-      ${Core.isCompleted(item)?`<div class="completed-note">✓ 这条信息已完成，请勿重复联系发布者。</div>`:`<button class="primary-button" id="contactButton">联系发布者</button>`}</div></article>`;
+      <div class="contact-card"><div><small>发布者联系方式</small><strong>${escapeHtml(item.contact)}</strong></div><button class="secondary-button" id="copyContact">复制</button></div>
+      <p class="contact-tip">联系时请说明物品特征，避免误领。</p>
+      ${Core.isCompleted(item)?`<div class="completed-note">✓ 这条信息已完成，请勿重复联系发布者。</div>`:""}</div></article>
+      ${itemImages.length ? `<div class="photo-lightbox hidden" id="photoLightbox" role="dialog" aria-modal="true" aria-label="物品照片大图"><button type="button" class="lightbox-close" aria-label="关闭大图">×</button><button type="button" class="lightbox-step previous" aria-label="上一张">‹</button><img id="lightboxImage" alt="${escapeHtml(item.title)}的大图"><button type="button" class="lightbox-step next" aria-label="下一张">›</button><span class="lightbox-count" id="lightboxCount"></span></div>` : ""}`;
     document.getElementById("copyContact").onclick=()=>copyContact(item.contact);
-    const contactButton=document.getElementById("contactButton"); if(contactButton) contactButton.onclick=()=>copyContact(item.contact);
+    if (itemImages.length) {
+      const lightbox = document.getElementById("photoLightbox");
+      const lightboxImage = document.getElementById("lightboxImage");
+      let currentPhoto = 0;
+      const showPhoto = (index) => {
+        currentPhoto = (index + itemImages.length) % itemImages.length;
+        lightboxImage.src = itemImages[currentPhoto];
+        document.getElementById("lightboxCount").textContent = `${currentPhoto + 1} / ${itemImages.length}`;
+        lightbox.classList.remove("hidden"); document.body.classList.add("lightbox-open");
+      };
+      const closeLightbox = () => { lightbox.classList.add("hidden"); document.body.classList.remove("lightbox-open"); };
+      document.querySelectorAll(".detail-photo").forEach((button) => button.onclick = () => showPhoto(Number(button.dataset.photoIndex)));
+      lightbox.querySelector(".lightbox-close").onclick = closeLightbox;
+      lightbox.querySelector(".previous").onclick = () => showPhoto(currentPhoto - 1);
+      lightbox.querySelector(".next").onclick = () => showPhoto(currentPhoto + 1);
+      lightbox.querySelectorAll(".lightbox-step").forEach((button) => button.classList.toggle("hidden", itemImages.length < 2));
+      lightbox.onclick = (event) => { if (event.target === lightbox) closeLightbox(); };
+    }
   }
   function copyContact(contact) {
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(contact).then(()=>showToast("联系方式已复制")).catch(()=>fallbackCopy(contact)); else fallbackCopy(contact);
   }
   function fallbackCopy(text) { const area=document.createElement("textarea"); area.value=text; document.body.appendChild(area); area.select(); document.execCommand("copy"); area.remove(); showToast("联系方式已复制"); }
 
+  function compressPhoto(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith("image/")) { reject(new Error("请选择图片文件")); return; }
+      if (file.size > 8 * 1024 * 1024) { reject(new Error("照片不能超过 8MB")); return; }
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("照片读取失败，请重新选择"));
+      reader.onload = () => {
+        const photo = new Image();
+        photo.onerror = () => reject(new Error("照片格式无法识别"));
+        photo.onload = () => {
+          const maxSide = 1000;
+          const scale = Math.min(1, maxSide / Math.max(photo.width, photo.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(photo.width * scale));
+          canvas.height = Math.max(1, Math.round(photo.height * scale));
+          canvas.getContext("2d").drawImage(photo, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", 0.78));
+        };
+        photo.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   function renderMine(params) {
     setNav("mine");
     const filter=params.get("filter")||"all"; const mine=items.filter((item)=>item.mine);
     const shown=mine.filter((item)=>filter==="all"||(filter==="active"?!Core.isCompleted(item):Core.isCompleted(item)));
-    view.innerHTML=`<div class="profile-banner"><div class="avatar">校</div><div><span class="eyebrow">校园同学</span><h1>我的发布</h1><p>让每一次发布都有回应，也让状态及时更新。</p></div></div>
+    view.innerHTML=`<div class="profile-banner"><div class="avatar">我</div><div><h1>我的发布</h1><p>查看发布记录，更新状态，也可以删除不需要的信息。</p></div></div>
       <div class="chips mine-filters"><a class="chip ${filter==="all"?"active":""}" href="#mine?filter=all">全部 ${mine.length}</a><a class="chip ${filter==="active"?"active":""}" href="#mine?filter=active">进行中</a><a class="chip ${filter==="done"?"active":""}" href="#mine?filter=done">已完成</a></div>
       <div class="manage-list">${shown.length?shown.map((item)=>`<article class="manage-card"><div class="manage-main" data-open="${escapeHtml(item.id)}"><span class="manage-icon">${ICONS[item.category]||"📦"}</span><div><span class="type-badge ${item.type}">${item.type==="lost"?"寻物":"招领"}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.location)} · ${escapeHtml(item.date)}</p></div></div><div class="manage-actions"><span class="status-badge">${escapeHtml(item.status)}</span><div class="manage-buttons"><button class="secondary-button" data-toggle="${escapeHtml(item.id)}">${Core.isCompleted(item)?"恢复为进行中":item.type==="lost"?"标记为已找到":"标记为已归还"}</button><button class="delete-button" data-delete="${escapeHtml(item.id)}">删除</button></div></div></article>`).join(""):emptyState("这里还没有信息", "发布一条寻物或招领信息后，它会显示在这里。")}</div>`;
     document.querySelectorAll("[data-open]").forEach((node)=>node.onclick=()=>go(`detail?id=${encodeURIComponent(node.dataset.open)}`));
@@ -202,6 +296,7 @@
   }
 
   function render() {
+    document.body.classList.remove("lightbox-open");
     const {page,params}=routeParts();
     ({home:renderHome,search:renderSearch,publish:renderPublish,success:renderSuccess,detail:renderDetail,mine:renderMine,completed:renderCompleted}[page]||renderHome)(params);
     window.scrollTo({top:0,behavior:"smooth"});

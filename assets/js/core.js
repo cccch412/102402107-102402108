@@ -66,6 +66,10 @@
     const check = validateItem(draft);
     if (!check.valid) return { item: null, errors: check.errors };
     const stamp = Number(now || Date.now());
+    const validImages = Array.isArray(draft.images)
+      ? draft.images.filter((image) => typeof image === "string" && /^data:image\//.test(image)).slice(0, 4)
+      : [];
+    if (!validImages.length && typeof draft.image === "string" && /^data:image\//.test(draft.image)) validImages.push(draft.image);
     return {
       item: {
         id: createId(stamp),
@@ -76,6 +80,8 @@
         location: String(draft.location).trim(),
         description: String(draft.description).trim(),
         contact: String(draft.contact).trim(),
+        images: validImages,
+        image: validImages[0] || "",
         status: statusFor(draft.type, false),
         mine: true,
         createdAt: stamp

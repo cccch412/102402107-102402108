@@ -1,8 +1,13 @@
-/* 按第三版修改意见进行的定点调整 */
+/* 按第三、四版修改意见进行的定点调整 */
 .hero:before{display:none!important}
+.hero-greeting{position:relative;z-index:2;color:#fff3f7;font-size:17px;font-weight:800;letter-spacing:.04em}
 
 /* 首页标题、数量与历史入口 */
 .section-title-row{display:flex;align-items:baseline;gap:12px}
+.section-heading{align-items:flex-start;margin-bottom:4px}
+.section-heading h2{margin-top:0}
+.campus-label{margin-left:auto;color:var(--rose-dark);font-family:"STXingkai","华文行楷","KaiTi","楷体",serif;font-size:25px;font-weight:800;letter-spacing:.14em;line-height:1;text-shadow:0 5px 14px rgba(185,101,128,.18);transform:rotate(-1deg)}
+#homeFilters .chips{padding-top:0}
 .result-count{color:#c57a96;font-size:14px;font-weight:600;white-space:nowrap}
 .history-link{display:flex;align-items:center;justify-content:flex-end;gap:6px;color:#b47a8f;text-decoration:none;font-size:13px;padding:8px 4px 2px}
 .history-link:hover{color:var(--rose-dark)}
@@ -10,6 +15,44 @@
 .completed-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:10px}
 .completed-toolbar .chips{padding-bottom:0}
 .completed-list .completed{opacity:.68}
+.completed-title{padding:4px 2px 18px}
+.completed-title .eyebrow{font-size:24px;letter-spacing:.08em}
+
+/* 发布页采用外部上下结构，表单内部保留两列 */
+.publish-intro{text-align:center;margin:0 auto 10px}
+.publish-intro h1{margin:0 0 7px;font-size:34px;letter-spacing:-.04em}
+.publish-intro p{margin:0;color:var(--muted);line-height:1.6}
+.publish-intro small{display:block;margin-top:7px;color:#bd879a;font-size:12px}
+.photo-upload-row{position:relative;grid-column:1 / -1!important}
+.photo-upload-control{display:flex;align-items:center;gap:12px;margin-top:7px;padding:10px 12px;border:1px dashed #e8b9c8;border-radius:13px;background:#fffafa;color:var(--muted)}
+.photo-upload-control input{position:absolute;width:1px!important;height:1px;opacity:0;pointer-events:none}
+.photo-upload-control>span{flex:0 0 auto;padding:8px 14px;border-radius:10px;background:var(--pink-soft);color:var(--rose-dark);font-weight:800;cursor:pointer}
+.photo-upload-control small{font-weight:400}
+.photo-preview{display:grid;grid-template-columns:repeat(4,64px);gap:7px;width:max-content;margin-top:9px}
+.photo-preview-item{position:relative;display:block;width:64px;height:58px;border-radius:11px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.photo-preview-item img{width:100%;height:100%;object-fit:cover}
+.remove-photo{position:absolute;right:6px;top:6px;width:26px;height:26px;border:0;border-radius:50%;background:rgba(79,59,69,.78);color:#fff;font-size:19px;line-height:1;cursor:pointer;opacity:0;transform:scale(.86);transition:.18s}
+.photo-preview-item:hover .remove-photo,.photo-preview-item:focus-within .remove-photo{opacity:1;transform:scale(1)}
+.full-width-field{grid-column:1 / -1!important}
+.primary-button:disabled{cursor:wait;opacity:.65}
+.detail-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px;background:#f8edf1}
+.detail-gallery.count-1{grid-template-columns:1fr}
+.detail-photo{height:150px;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;cursor:zoom-in}
+.detail-gallery.count-1 .detail-photo{height:230px}
+.detail-photo img{display:block;width:100%;height:100%;object-fit:contain}
+.detail-photo:hover{border-color:var(--pink);box-shadow:0 8px 20px rgba(181,110,135,.12)}
+.photo-lightbox{position:fixed;z-index:100;inset:0;display:flex;align-items:center;justify-content:center;padding:54px 86px;background:rgba(45,30,38,.86);backdrop-filter:blur(8px)}
+.photo-lightbox img{display:block;max-width:100%;max-height:100%;object-fit:contain;border-radius:16px;background:#fff;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.lightbox-close,.lightbox-step{position:absolute;border:0;border-radius:50%;background:rgba(255,255,255,.92);color:var(--rose-deep);cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.lightbox-close{right:28px;top:24px;width:44px;height:44px;font-size:29px}
+.lightbox-step{top:50%;width:48px;height:48px;font-size:38px;line-height:1;transform:translateY(-50%)}
+.lightbox-step.previous{left:22px}.lightbox-step.next{right:22px}
+.lightbox-count{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.9);color:var(--rose-deep);font-size:12px;font-weight:800}
+body.lightbox-open{overflow:hidden!important}
+.contact-tip{margin:-7px 2px 0;color:var(--muted);font-size:12px}
+
+/* 修复提示文字中的换行转义，页面不再出现 AA 或反斜线字符 */
+#view:has(.detail-card):after{display:none!important;content:none!important}
 
 /* 我的发布管理按钮 */
 .manage-buttons{display:flex;align-items:center;gap:8px}
@@ -21,7 +64,7 @@
   body:has(.hero){overflow:hidden}
   .app-shell:has(.hero){height:100vh;overflow:hidden}
   #view:has(.hero){height:calc(100vh - 168px);grid-template-columns:minmax(340px,2fr) minmax(520px,3fr);grid-template-rows:auto auto minmax(0,1fr) auto;overflow:hidden}
-  #view:has(.hero) .hero{height:100%;min-height:0;max-height:none;justify-content:flex-start;background:linear-gradient(180deg,#dd8da6 0%,#d7849e 45%,#edb7c7 100%)}
+  #view:has(.hero) .hero{height:100%;min-height:0;max-height:none;justify-content:flex-start;background:linear-gradient(180deg,#e5a3b7 0%,#df94ac 45%,#f1c5d1 100%)}
   #view:has(.hero) .hero:after{border-color:rgba(255,255,255,.13)}
   #view:has(.hero) .search-entry{order:-1;margin:0 0 28px}
   #view:has(.hero) #homeList{grid-template-columns:1fr;height:100%;min-height:0;max-height:none;overflow-y:auto;overflow-x:hidden;padding-right:10px;padding-bottom:18px;overscroll-behavior:contain;scrollbar-color:#e6a9bb #fff0f4;scrollbar-width:thin}
@@ -30,9 +73,44 @@
   #view:has(.hero) #homeList::-webkit-scrollbar-thumb{background:#e6a9bb;border-radius:10px}
   #view:has(.hero) .history-link{grid-column:2;grid-row:4}
   #view:has(.completed-title) .completed-list{grid-template-columns:1fr 1fr}
+
+  body:has(#searchForm){overflow:hidden}
+  .app-shell:has(#searchForm){height:100vh;overflow:hidden}
+  #view:has(#searchForm){height:calc(100vh - 168px);display:grid;grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr);gap:10px;overflow:hidden}
+  #view:has(#searchForm) #searchForm{grid-column:1;grid-row:1;width:100%;margin:0;padding:16px 18px}
+  #view:has(#searchForm) .search-box{width:100%}
+  #view:has(#searchForm) .results-summary{grid-column:1;grid-row:2;margin:0 2px}
+  #view:has(#searchForm) .card-list{grid-column:1;grid-row:3;grid-template-columns:1fr;height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:10px;padding-bottom:18px;overscroll-behavior:contain;scrollbar-color:#e6a9bb #fff0f4;scrollbar-width:thin}
+  #view:has(#searchForm) .card-list::-webkit-scrollbar{width:8px}
+  #view:has(#searchForm) .card-list::-webkit-scrollbar-track{background:#fff0f4;border-radius:10px}
+  #view:has(#searchForm) .card-list::-webkit-scrollbar-thumb{background:#e6a9bb;border-radius:10px}
+
+  body:has(#publishForm){overflow:hidden}
+  .app-shell:has(#publishForm){height:100vh;overflow:hidden}
+  #view:has(#publishForm){display:block;width:100%;max-width:1280px;height:calc(100vh - 168px);padding:10px 24px 6px;overflow:hidden}
+  #view:has(#publishForm) #publishForm{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;width:100%;padding:14px 20px}
+  #view:has(#publishForm) #publishForm fieldset,#view:has(#publishForm) #publishForm .form-grid,#view:has(#publishForm) #publishForm .full-width-field,#view:has(#publishForm) #publishForm .privacy-note,#view:has(#publishForm) #publishForm>.primary-button{grid-column:1 / -1}
+  #view:has(#publishForm) #publishForm fieldset{margin-bottom:9px}
+  #view:has(#publishForm) #publishForm .form-grid{gap:8px 14px}
+  #view:has(#publishForm) #publishForm input,#view:has(#publishForm) #publishForm select,#view:has(#publishForm) #publishForm textarea{margin-top:4px;padding:9px 11px}
+  #view:has(#publishForm) #publishForm small[data-error]{min-height:12px;margin-top:2px}
+  #view:has(#publishForm) #publishForm>.full-width-field{margin-top:7px}
+  #view:has(#publishForm) #publishForm .photo-upload-control{margin-top:4px;padding:7px 10px}
+  #view:has(#publishForm) #publishForm .photo-upload-control{padding-right:300px}
+  #view:has(#publishForm) #publishForm .photo-preview{position:absolute;right:24px;top:22px;margin-top:0;grid-template-columns:repeat(4,56px)}
+  #view:has(#publishForm) #publishForm .photo-preview-item{width:56px;height:50px}
+  #view:has(#publishForm) #publishForm .privacy-note{margin:3px 0 6px;padding:5px 10px;background:transparent}
+  #view:has(#publishForm) #publishForm>.primary-button{padding:9px 18px}
+
+  #view:has(.detail-card){display:block;max-width:940px}
+  #view:has(.detail-card) .detail-card{width:100%}
+  #view:has(.detail-card) .detail-cover{height:132px}
+  #view:has(.detail-card) .detail-cover span{font-size:96px}
 }
+
+.action-card.lost,.action-card.found{background:rgba(255,255,255,.14)}
 
 /* 底部四个入口统一在同一水平线上，发布按钮不再向上凸起 */
 .bottom-nav .publish-nav span{width:auto;height:auto;margin-top:0;border-radius:0;background:transparent;color:inherit;box-shadow:none}
 
-@media(max-width:600px){.manage-actions{gap:12px}.manage-buttons{width:100%}.manage-buttons button{flex:1}.completed-toolbar{align-items:stretch;flex-direction:column}.completed-toolbar .result-count{align-self:flex-end}}
+@media(max-width:600px){.manage-actions{gap:12px}.manage-buttons{width:100%}.manage-buttons button{flex:1}.completed-toolbar{align-items:stretch;flex-direction:column}.completed-toolbar .result-count{align-self:flex-end}.photo-upload-control{align-items:flex-start;flex-direction:column}.photo-preview{grid-template-columns:repeat(4,minmax(0,1fr));width:100%}.photo-preview-item{width:100%;height:58px}.detail-gallery{gap:6px;padding:8px}.detail-photo{height:112px}.detail-gallery.count-1 .detail-photo{height:230px}.photo-lightbox{padding:70px 18px}.lightbox-step{width:42px;height:42px}.lightbox-step.previous{left:8px}.lightbox-step.next{right:8px}.publish-intro h1{font-size:30px}}
